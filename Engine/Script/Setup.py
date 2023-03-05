@@ -46,6 +46,12 @@ if __name__ == "__main__":
 
     print("setup {0}...".format(project_option["project"]))
 
+    premake5_source_file = open(project_directory + "\\Engine\\Script\\premake5.lua", 'rt', encoding="UTF-8")
+    premake5_source = premake5_source_file.read()
+    premake5_source_file.close()
+    
+    premake5_source = premake5_source.replace("BLANK", project_option["project"])
+
     generate_project_files_script_source = """@echo off
 Engine\\\\Script\\\\GenerateProjectFiles.bat {0} {1}""".format(project_option["project"], project_option["visualstudio"])
 
@@ -57,6 +63,9 @@ Engine\\\\Script\\\\Build.bat {0} {1} %%option%%""".format(project_option["proje
 .dmp
 .vs
 """.format(project_option["project"])
+    
+    premake5_script_path = project_directory + "\\premake5.lua"
+    create_script_file(premake5_script_path, premake5_source)
 
     generate_project_files_script_path = project_directory + "\\GenerateProjectFiles.bat"
     create_script_file(generate_project_files_script_path, generate_project_files_script_source)
@@ -66,3 +75,18 @@ Engine\\\\Script\\\\Build.bat {0} {1} %%option%%""".format(project_option["proje
 
     git_ignore_path = project_directory + "\\.gitignore"
     create_script_file(git_ignore_path, git_ignore_source)
+
+    os.mkdir(project_directory + "\\Game")
+    os.mkdir(project_directory + "\\Game\\Content")
+    os.mkdir(project_directory + "\\Game\\Crash")
+    os.mkdir(project_directory + "\\Game\\Source")
+    os.mkdir(project_directory + "\\Game\\Source\\Private")
+    os.mkdir(project_directory + "\\Game\\Source\\Public")
+
+    application_source = """int main(int argc, char* argv[])
+{
+    return 0;
+}
+"""
+    application_source_path = project_directory + "\\Game\\Source" + "\\Application.cpp"
+    create_script_file(application_source_path, application_source)
