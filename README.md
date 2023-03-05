@@ -16,3 +16,11 @@
 - [git](https://git-scm.com/)
 - [Visual Studio 2019 이상](https://visualstudio.microsoft.com/)
 <br><br>
+
+
+## Third Party
+
+`GameEngine` 에서 사용하는 서드 파티 라이브러리는 다음과 같습니다.
+- [json](https://github.com/nlohmann/json)
+- [miniaudio](https://miniaud.io/)
+- [stb](https://github.com/nothings/stb)
