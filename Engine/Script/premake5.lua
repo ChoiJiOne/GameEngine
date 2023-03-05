@@ -1,5 +1,4 @@
 workspace "BLANK"
-
    -- 빌드 구성 요소입니다.
    configurations { 
       "Debug",
