@@ -20,7 +20,8 @@ def is_already_setup_project(project_directory):
         project_directory + "\\premake5.lua",
         project_directory + "\\GenerateProjectFiles.bat",
         project_directory + "\\Build.bat",
-        project_directory + "\\Game"
+        project_directory + "\\.gitignore",
+        project_directory + "\\Game",
     ]
 
     for project_element in project_elements:
@@ -44,3 +45,24 @@ if __name__ == "__main__":
         exit(0)
 
     print("setup {0}...".format(project_option["project"]))
+
+    generate_project_files_script_source = """@echo off
+Engine\\\\Script\\\\GenerateProjectFiles.bat {0} {1}""".format(project_option["project"], project_option["visualstudio"])
+
+    build_scipt_source = """@echo off
+SET option=%1
+Engine\\\\Script\\\\Build.bat {0} {1} %%option%%""".format(project_option["project"], project_option["visualstudio"])
+
+    git_ignore_source = """{0}
+.dmp
+.vs
+""".format(project_option["project"])
+
+    generate_project_files_script_path = project_directory + "\\GenerateProjectFiles.bat"
+    create_script_file(generate_project_files_script_path, generate_project_files_script_source)
+
+    build_script_path = project_directory + "\\Build.bat"
+    create_script_file(build_script_path, build_scipt_source)
+
+    git_ignore_path = project_directory + "\\.gitignore"
+    create_script_file(git_ignore_path, git_ignore_source)
