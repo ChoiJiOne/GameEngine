@@ -29,6 +29,12 @@ def is_already_setup_project(project_directory):
 
     return False
 
+# 스크립트 파일을 생성합니다.
+def create_script_file(script_file_path, script_content):
+    file = open(script_file_path, "w")
+    file.write(script_content)
+    file.close()
+
 if __name__ == "__main__":
     project_directory = os.getcwd()
     project_option = parse_commandline()
@@ -38,4 +44,3 @@ if __name__ == "__main__":
         exit(0)
 
     print("setup {0}...".format(project_option["project"]))
-    
