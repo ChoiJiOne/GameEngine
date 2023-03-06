@@ -4,7 +4,6 @@
 
 #include <cstdint>
 #include <string>
-
 #include <windows.h>
 
 
@@ -98,14 +97,18 @@ public:
 	/**
 	 * @brief 현재 윈도우 크기를 변경합니다.
 	 * 
+	 * @note 윈도우가 풀 스크린 모드이면 아무 동작도 수행하지 않습니다.
+	 * 
 	 * @param Width 변경할 윈도우의 가로 크기입니다.
 	 * @param Height 변경할 윈도우의 세로 크기입니다.
 	 * 
 	 * @throws 윈도우 창의 크기를 설정하는 데 실패하면 C++ 표준 예외를 던집니다.
 	 */
 	template<typename T>
-	void SetSize(T Width, T Height)
+	void SetSize(const T& Width, const T& Height)
 	{
+		if (bIsFullScreen_) return;
+
 		RECT Rect = { 0, 0, static_cast<LONG>(Width), static_cast<LONG>(Height) };
 		CHECK(AdjustWindowRect(&Rect, WS_OVERLAPPEDWINDOW, false), "failed to adjust window size");
 	}
