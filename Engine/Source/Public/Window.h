@@ -84,7 +84,7 @@ public:
 	 * @throws 윈도우 창의 크기를 얻는 데 실패하면 C++ 표준 예외를 던집니다.
 	 */
 	template <typename T>
-	void GetSize(T& Width, T& Height)
+	inline void GetSize(T& Width, T& Height)
 	{
 		RECT WindowRect = {};
 		CHECK(GetClientRect(WindowHandle_, &WindowRect), "failed to get client size");
@@ -105,7 +105,7 @@ public:
 	 * @throws 윈도우 창의 크기를 설정하는 데 실패하면 C++ 표준 예외를 던집니다.
 	 */
 	template<typename T>
-	void SetSize(const T& Width, const T& Height)
+	inline void SetSize(const T& Width, const T& Height)
 	{
 		if (bIsFullScreen_) return;
 
@@ -120,6 +120,24 @@ public:
 	 * @return 윈도우 창의 핸들 값을 반환합니다.
 	 */
 	HWND GetHandle() { return WindowHandle_; }
+
+
+	/**
+	 * @brief 윈도우 창을 숨깁니다.
+	 */
+	inline void Hide()
+	{
+		CHECK(ShowWindow(WindowHandle_, SW_HIDE), "failed to hide window");
+	}
+
+
+	/**
+	 * @brief 윈도우 창을 보이게 합니다.
+	 */
+	inline void Show()
+	{
+		CHECK(ShowWindow(WindowHandle_, SW_HIDE), "failed to show window");
+	}
 
 
 	/**
