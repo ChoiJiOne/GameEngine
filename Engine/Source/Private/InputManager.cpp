@@ -1,5 +1,26 @@
 #include "InputManager.h"
+#include "Window.h"
+#include "Mouse.h"
+#include "Keyboard.h"
 #include "Utils.hpp"
+
+void InputManager::Setup(Window* MainWindow)
+{
+	WindowHandle_ = MainWindow->GetHandle();
+
+	Keyboard_ = std::make_unique<Keyboard>();
+	Mouse_ = std::make_unique<Mouse>(WindowHandle_);
+
+	bIsSetup_ = true;
+}
+
+void InputManager::Cleanup()
+{
+	Mouse_.reset();
+	Keyboard_.reset();
+
+	bIsSetup_ = false;
+}
 
 LRESULT InputManager::ProcessWindowMessage(HWND WindowHandle, uint32_t Message, WPARAM WParam, LPARAM LParam)
 {
@@ -7,10 +28,6 @@ LRESULT InputManager::ProcessWindowMessage(HWND WindowHandle, uint32_t Message, 
 
 	switch (Message)
 	{
-	case WM_CREATE:
-		WindowHandle_ = WindowHandle;
-		break;
-
 	case WM_ACTIVATE:
 		WindowEvent = (LOWORD(WParam) == WA_INACTIVE) ? EWindowEvent::INACTIVE : EWindowEvent::ACTIVE;
 		break;
@@ -102,44 +119,9 @@ void InputManager::UnbindWindowEvent(const EWindowEvent& WindowEvent)
 void InputManager::Tick()
 {
 	PollEventMessage();
-	UpdateKeyboardState();
-	UpdateMousePosition();
-}
 
-EPressState InputManager::GetKeyPressState(const EKeyCode& KeyCode) const
-{
-	EPressState PressState = EPressState::NONE;
-
-	if (IsPressKey(PrevKeyboardState_, KeyCode))
-	{
-		if (IsPressKey(CurrKeyboardState_, KeyCode))
-		{
-			PressState = EPressState::HELD;
-		}
-		else
-		{
-			PressState = EPressState::RELEASED;
-		}
-	}
-	else
-	{
-		if (IsPressKey(CurrKeyboardState_, KeyCode))
-		{
-			PressState = EPressState::PRESSED;
-		}
-		else
-		{
-			PressState = EPressState::NONE;
-		}
-	}
-
-	return PressState;
-}
-
-InputManager::InputManager()
-	: PrevKeyboardState_(256, 0)
-	, CurrKeyboardState_(256, 0)
-{
+	Keyboard_->Tick();
+	Mouse_->Tick();
 }
 
 void InputManager::PollEventMessage()
@@ -151,45 +133,6 @@ void InputManager::PollEventMessage()
 		TranslateMessage(&EventMessage);
 		DispatchMessage(&EventMessage);
 	}
-}
-
-void InputManager::UpdateKeyboardState()
-{
-	std::copy(CurrKeyboardState_.begin(), CurrKeyboardState_.end(), PrevKeyboardState_.begin());
-
-	CHECK(GetKeyboardState(&CurrKeyboardState_[0]), "failed to get keyboard state");
-}
-
-bool InputManager::IsPressKey(const std::vector<uint8_t>& KeyboardState, const EKeyCode& KeyCode) const
-{
-	return (KeyboardState[static_cast<int32_t>(KeyCode)] & 0x80);
-}
-
-Vec2i InputManager::GetMousePositionFromScreen()
-{
-	POINT MousePosition;
-	CHECK(GetCursorPos(&MousePosition), "failed to get current mouse position");
-
-	return Vec2i(static_cast<int32_t>(MousePosition.x), static_cast<int32_t>(MousePosition.y));
-}
-
-Vec2i InputManager::GetMousePositionFromWindow()
-{
-	POINT MousePosition;
-	
-	CHECK(GetCursorPos(&MousePosition), "failed to get current mouse position");
-	CHECK(ScreenToClient(WindowHandle_, &MousePosition), "failed to convert mouse position");
-
-	return Vec2i(static_cast<int32_t>(MousePosition.x), static_cast<int32_t>(MousePosition.y));
-}
-
-void InputManager::UpdateMousePosition()
-{
-	PrevScreenMousePosition_ = CurrScreenMousePosition_;
-	PrevWindowMousePosition_ = CurrWindowMousePosition_;
-
-	CurrScreenMousePosition_ = GetMousePositionFromScreen();
-	CurrWindowMousePosition_ = GetMousePositionFromWindow();
 }
 
 void InputManager::HandleWindowEvent(const EWindowEvent& WindowEvent)
