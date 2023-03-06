@@ -1,6 +1,6 @@
 #include "ErrorHandler.h"
-#include "CommandLineManager.h"
-#include "Text.hpp"
+#include "CommandLine.h"
+#include "TextHelper.hpp"
 
 std::string ErrorHandler::LastErrorMessage_;
 std::string ErrorHandler::ErrorFileName_;
