@@ -2,6 +2,7 @@
 
 #include "Macro.h"
 #include "Color.h"
+#include "Shader.h"
 
 #include <memory>
 #include <unordered_map>
@@ -11,47 +12,46 @@
 class Window;
 class Texture2D;
 class Font;
-class Shader;
 
 
 /**
- * @brief 그래픽 관련 처리를 수행합니다.
+ * @brief 렌더링 관련 처리를 수행합니다.
  * 
  * @note 이 클래스는 싱글턴으로 헤더만 추가하면 바로 사용할 수 있습니다.
  */
-class GraphicsManager
+class RenderManager
 {
 public:
 	/**
 	 * @brief 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
 	 */
-	DISALLOW_COPY_AND_ASSIGN(GraphicsManager);
+	DISALLOW_COPY_AND_ASSIGN(RenderManager);
 
 
 	/**
-	 * @brief GraphicsManager의 인스턴스를 얻습니다.
+	 * @brief RenderManager의 인스턴스를 얻습니다.
 	 * 
-	 * @return GraphicsManager의 인스턴스 참조자를 반환합니다.
+	 * @return RenderManager의 인스턴스 참조자를 반환합니다.
 	 */
-	static GraphicsManager& Get()
+	static RenderManager& Get()
 	{
-		static GraphicsManager Instance;
+		static RenderManager Instance;
 		return Instance;
 	}
 
 
 	/**
-	 * @brief GraphicsManager를 명시적으로 초기화합니다.
+	 * @brief RenderManager를 명시적으로 초기화합니다.
 	 * 
-	 * @param RenderTargetWindow 렌더링 대상이 되는 윈도우의 포인터입니다.
+	 * @param MainWindow 렌더링 대상이 되는 메인 윈도우의 포인터입니다.
 	 * 
 	 * @throws 내부 리소스 생성에 실패하면 C++ 표준 예외를 던집니다.
 	 */
-	void Setup(Window* RenderTargetWindow);
+	void Setup(Window* MainWindow);
 
 
 	/**
-	 * @brief GraphicsManager의 내부 요소를 명시적으로 정리합니다.
+	 * @brief RenderManager의 내부 요소를 명시적으로 정리합니다.
 	 */
 	void Cleanup();
 
@@ -278,13 +278,13 @@ private:
 	 * 
 	 * @note 생성자는 아무런 동작도 수행하지 않습니다.
 	 */
-	GraphicsManager() = default;
+	RenderManager() = default;
 
 
 	/**
 	 * @brief 그래픽 관련 리소스를 정리하는 가상 소멸자입니다.
 	 */
-	virtual ~GraphicsManager();
+	virtual ~RenderManager();
 
 
 	/**
@@ -332,7 +332,7 @@ private:
 	 * 
 	 * @return 깊이 스텐실 상태 생성 결과를 반환합니다. 성공했다면 S_OK, 그렇지 않다면 그 이외의 값을 반환합니다.
 	 */
-	HRESULT CreateDepthStencilState(ID3D11DepthStencilState**DepthStencilState, bool bIsEnableDepth, bool bIsEnableStencil);
+	HRESULT CreateDepthStencilState(ID3D11DepthStencilState** DepthStencilState, bool bIsEnableDepth, bool bIsEnableStencil);
 
 
 	/**
@@ -360,9 +360,9 @@ private:
 
 private:
 	/**
-	 * @brief 렌더링 대상이 되는 윈도우입니다.
+	 * @brief 렌더링이 수행되는 메인 윈도우입니다.
 	 */
-	Window* RenderTargetWindow_ = nullptr;
+	Window* MainWindow_ = nullptr;
 
 
 	/**

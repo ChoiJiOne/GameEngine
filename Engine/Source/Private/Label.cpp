@@ -1,7 +1,7 @@
 #include "Label.h"
 #include "ContentManager.h"
 #include "Font.h"
-#include "GraphicsManager.h"
+#include "RenderManager.h"
 #include "Shader.h"
 
 Label::Label(
@@ -22,5 +22,5 @@ Label::Label(
 void Label::Tick(float DeltaSeconds)
 {
 	Font& TitleFont = ContentManager::Get().GetFont(FontSignature_);
-	GraphicsManager::Get().DrawText2D(TitleFont, Text_, Position_, Color_);
+	RenderManager::Get().DrawText2D(TitleFont, Text_, Position_, Color_);
 }

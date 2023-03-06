@@ -2,7 +2,7 @@
 #include "CommandLine.h"
 #include "Config.h"
 #include "Font.h"
-#include "GraphicsManager.h"
+#include "RenderManager.h"
 #include "Sound.h"
 #include "Shader.h"
 #include "Texture2D.h"
@@ -49,7 +49,7 @@ Texture2D& ContentManager::LoadTexture2D(const std::string& Signature, const std
 	CHECK(!bIsExist, "collision texture signature");
 
 	const std::string& Path = ContentPath_ + "Texture\\" + FileName;
-	Textures_[Signature] = std::make_unique<Texture2D>(GraphicsManager::Get().GetDevice(), Path);
+	Textures_[Signature] = std::make_unique<Texture2D>(RenderManager::Get().GetDevice(), Path);
 
 	return *Textures_[Signature].get();
 }
@@ -73,7 +73,7 @@ Font& ContentManager::LoadFont(const std::string& Signature, const std::string& 
 	CHECK(!bIsExist, "collision font signature");
 
 	const std::string& Path = ContentPath_ + "Font\\" + FileName;
-	Fonts_[Signature] = std::make_unique<Font>(GraphicsManager::Get().GetDevice(), Path, BeginCodePoint, EndCodePoint, FontSize);
+	Fonts_[Signature] = std::make_unique<Font>(RenderManager::Get().GetDevice(), Path, BeginCodePoint, EndCodePoint, FontSize);
 
 	return *Fonts_[Signature].get();
 }

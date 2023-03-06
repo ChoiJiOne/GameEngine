@@ -1,8 +1,7 @@
-#include "GraphicsManager.h"
+#include "RenderManager.h"
 #include "CommandLine.h"
 #include "Font.h"
 #include "Window.h"
-#include "Shader.h"
 #include "Math.hpp"
 #include "TextHelper.hpp"
 #include "Texture2D.h"
@@ -14,12 +13,12 @@
 #include <cstdint>
 #include <windows.h>
 
-void GraphicsManager::Setup(Window* RenderTargetWindow)
+void RenderManager::Setup(Window* MainWindow)
 {
-	RenderTargetWindow_ = RenderTargetWindow;
+	MainWindow_ = MainWindow;
 
-	CHECK_HR(CreateDeviceAndContext(RenderTargetWindow_->GetHandle()), "failed to create device and context");
-	CHECK_HR(CreateSwapChain(RenderTargetWindow_->GetHandle()), "failed to create swapchain");
+	CHECK_HR(CreateDeviceAndContext(MainWindow_->GetHandle()), "failed to create device and context");
+	CHECK_HR(CreateSwapChain(MainWindow_->GetHandle()), "failed to create swapchain");
 	CHECK_HR(CreateRenderTargetView(), "failed to create render target view");
 	CHECK_HR(CreateDepthStencilView(), "failed to create depth stencil view");
 	CHECK_HR(CreateDepthStencilState(&DepthStencilState_["EnableZ"], true, true), "failed to create enable z depth stencil state");
@@ -65,9 +64,9 @@ void GraphicsManager::Setup(Window* RenderTargetWindow)
 	TextShader->SetProjectionMatrix(OrthoMatrix);
 }
 
-void GraphicsManager::Cleanup()
+void RenderManager::Cleanup()
 {
-	if (RenderTargetWindow_->IsFullScreen() && SwapChain_)
+	if (MainWindow_->IsFullScreen() && SwapChain_)
 	{
 		CHECK_HR(SwapChain_->SetFullscreenState(false, nullptr), "failed to set full screen state");
 	}
@@ -106,12 +105,12 @@ void GraphicsManager::Cleanup()
 	SAFE_RELEASE(Device_);
 }
 
-void GraphicsManager::GetBackBufferSize(float& Width, float& Height)
+void RenderManager::GetBackBufferSize(float& Width, float& Height)
 {
-	RenderTargetWindow_->GetSize<float>(Width, Height);
+	MainWindow_->GetSize<float>(Width, Height);
 }
 
-void GraphicsManager::Resize()
+void RenderManager::Resize()
 {
 	uint32_t BackBufferWidth = 0, BackBufferHeight = 0;
 	DXGI_FORMAT BackBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -119,7 +118,7 @@ void GraphicsManager::Resize()
 
 	SAFE_RELEASE(RenderTargetView_);
 
-	RenderTargetWindow_->GetSize<uint32_t>(BackBufferWidth, BackBufferHeight);
+	MainWindow_->GetSize<uint32_t>(BackBufferWidth, BackBufferHeight);
 
 	CHECK_HR(SwapChain_->ResizeBuffers(BackBufferCount, BackBufferWidth, BackBufferHeight,BackBufferFormat, 0), "failed to resize buffer");
 	CHECK_HR(CreateRenderTargetView(), "failed to create render target view");
@@ -144,7 +143,7 @@ void GraphicsManager::Resize()
 	TextShader->SetProjectionMatrix(OrthoMatrix);
 }
 
-void GraphicsManager::SetViewport(float TopLeftX, float TopLeftY, float Width, float Height, float MinDepth, float MaxDepth)
+void RenderManager::SetViewport(float TopLeftX, float TopLeftY, float Width, float Height, float MinDepth, float MaxDepth)
 {
 	D3D11_VIEWPORT Viewport = {};
 
@@ -158,28 +157,28 @@ void GraphicsManager::SetViewport(float TopLeftX, float TopLeftY, float Width, f
 	Context_->RSSetViewports(1, &Viewport);
 }
 
-void GraphicsManager::SetDepthBuffer(bool bIsEnable)
+void RenderManager::SetDepthBuffer(bool bIsEnable)
 {
 	ID3D11DepthStencilState* DepthStencilState = bIsEnable ? DepthStencilState_["EnableZ"] : DepthStencilState_["DisableZ"];
 
 	Context_->OMSetDepthStencilState(DepthStencilState, 1);
 }
 
-void GraphicsManager::SetAlphaBlend(bool bIsEnable)
+void RenderManager::SetAlphaBlend(bool bIsEnable)
 {
 	ID3D11BlendState* BlendState = bIsEnable ? BlendState_["Alpha"] : nullptr;
 	
 	Context_->OMSetBlendState(BlendState, nullptr, 0xFFFFFFFF);
 }
 
-void GraphicsManager::SetFillMode(bool bIsEnable)
+void RenderManager::SetFillMode(bool bIsEnable)
 {
 	ID3D11RasterizerState* RasterizerState = bIsEnable ? RasterizerState_["Fill"] : RasterizerState_["Wireframe"];
 
 	Context_->RSSetState(RasterizerState);
 }
 
-void GraphicsManager::Clear(const LinearColor& Color, float Depth, uint8_t Stencil)
+void RenderManager::Clear(const LinearColor& Color, float Depth, uint8_t Stencil)
 {
 	Context_->OMSetRenderTargets(1, &RenderTargetView_, DepthStencilView_);
 
@@ -189,19 +188,19 @@ void GraphicsManager::Clear(const LinearColor& Color, float Depth, uint8_t Stenc
 	Context_->ClearDepthStencilView(DepthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, Depth, Stencil);
 }
 
-void GraphicsManager::Present(bool bIsVSync)
+void RenderManager::Present(bool bIsVSync)
 {
 	CHECK_HR(SwapChain_->Present(static_cast<uint32_t>(bIsVSync), 0), "failed to present backbuffer");
 }
 
-void GraphicsManager::DrawPoint2D(const Vec2f& Position, const LinearColor& Color)
+void RenderManager::DrawPoint2D(const Vec2f& Position, const LinearColor& Color)
 {
 	Primitive2DRenderShader* PrimitiveShader = reinterpret_cast<Primitive2DRenderShader*>(Shader_["Primitive"].get());
 
 	PrimitiveShader->RenderPoint(Context_, Vec3f(Position.x, Position.y, 0.0f), Color);
 }
 
-void GraphicsManager::DrawLine2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionTo, const LinearColor& ColorTo)
+void RenderManager::DrawLine2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
 	Primitive2DRenderShader* PrimitiveShader = reinterpret_cast<Primitive2DRenderShader*>(Shader_["Primitive"].get());
 
@@ -212,7 +211,7 @@ void GraphicsManager::DrawLine2D(const Vec2f& PositionFrom, const LinearColor& C
 	);
 }
 
-void GraphicsManager::DrawFillTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
+void RenderManager::DrawFillTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
 	Primitive2DRenderShader* PrimitiveShader = reinterpret_cast<Primitive2DRenderShader*>(Shader_["Primitive"].get());
 
@@ -224,7 +223,7 @@ void GraphicsManager::DrawFillTriangle2D(const Vec2f& PositionFrom, const Linear
 	);
 }
 
-void GraphicsManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
+void RenderManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
 	Primitive2DRenderShader* PrimitiveShader = reinterpret_cast<Primitive2DRenderShader*>(Shader_["Primitive"].get());
 
@@ -236,7 +235,7 @@ void GraphicsManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const L
 	);
 }
 
-void GraphicsManager::DrawFillQuad2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy0, const LinearColor& ColorBy0, const Vec2f& PositionBy1, const LinearColor& ColorBy1, const Vec2f& PositionTo, const LinearColor& ColorTo)
+void RenderManager::DrawFillQuad2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy0, const LinearColor& ColorBy0, const Vec2f& PositionBy1, const LinearColor& ColorBy1, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
 	Primitive2DRenderShader* PrimitiveShader = reinterpret_cast<Primitive2DRenderShader*>(Shader_["Primitive"].get());
 
@@ -249,7 +248,7 @@ void GraphicsManager::DrawFillQuad2D(const Vec2f& PositionFrom, const LinearColo
 	);
 }
 
-void GraphicsManager::DrawWireframeQuad2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy0, const LinearColor& ColorBy0, const Vec2f& PositionBy1, const LinearColor& ColorBy1, const Vec2f& PositionTo, const LinearColor& ColorTo)
+void RenderManager::DrawWireframeQuad2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy0, const LinearColor& ColorBy0, const Vec2f& PositionBy1, const LinearColor& ColorBy1, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
 	Primitive2DRenderShader* PrimitiveShader = reinterpret_cast<Primitive2DRenderShader*>(Shader_["Primitive"].get());
 
@@ -262,7 +261,7 @@ void GraphicsManager::DrawWireframeQuad2D(const Vec2f& PositionFrom, const Linea
 	);
 }
 
-void GraphicsManager::DrawTexture2D(Texture2D& Texture, const Vec2f& Center, float Width, float Height, float Rotate)
+void RenderManager::DrawTexture2D(Texture2D& Texture, const Vec2f& Center, float Width, float Height, float Rotate)
 {
 	Texture2DRenderShader* TextureShader = reinterpret_cast<Texture2DRenderShader*>(Shader_["Texture"].get());
 
@@ -270,19 +269,19 @@ void GraphicsManager::DrawTexture2D(Texture2D& Texture, const Vec2f& Center, flo
 	TextureShader->RenderTexture2D(Context_, Texture, Vec3f(Center.x, Center.y, 0.0f), Width, Height);
 }
 
-void GraphicsManager::DrawText2D(Font& FontResource, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color)
+void RenderManager::DrawText2D(Font& FontResource, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color)
 {
 	Text2DRenderShader* TextShader = reinterpret_cast<Text2DRenderShader*>(Shader_["Text"].get());
 
 	TextShader->RenderText2D(Context_, FontResource, Text, Vec3f(Center.x, Center.y, 0.0f), Color);
 }
 
-GraphicsManager::~GraphicsManager()
+RenderManager::~RenderManager()
 {
 	Cleanup();
 }
 
-HRESULT GraphicsManager::CreateDeviceAndContext(HWND WindowHandle)
+HRESULT RenderManager::CreateDeviceAndContext(HWND WindowHandle)
 {
 	SAFE_RELEASE(Context_);
 	SAFE_RELEASE(Device_);
@@ -333,7 +332,7 @@ HRESULT GraphicsManager::CreateDeviceAndContext(HWND WindowHandle)
 	return HR;
 }
 
-HRESULT GraphicsManager::CreateSwapChain(HWND WindowHandle)
+HRESULT RenderManager::CreateSwapChain(HWND WindowHandle)
 {
 	SAFE_RELEASE(SwapChain_);
 
@@ -354,7 +353,7 @@ HRESULT GraphicsManager::CreateSwapChain(HWND WindowHandle)
 	}
 
 	uint32_t WindowWidth = 0, WindowHeight = 0;
-	RenderTargetWindow_->GetSize<uint32_t>(WindowWidth, WindowHeight);
+	MainWindow_->GetSize<uint32_t>(WindowWidth, WindowHeight);
 
 	DXGI_SWAP_CHAIN_DESC SwapChainDesc = {};
 	SwapChainDesc.BufferCount = 2;
@@ -368,7 +367,7 @@ HRESULT GraphicsManager::CreateSwapChain(HWND WindowHandle)
 	SwapChainDesc.SampleDesc.Count = 1;
 	SwapChainDesc.SampleDesc.Quality = 0;
 	SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	SwapChainDesc.Windowed = !RenderTargetWindow_->IsFullScreen();
+	SwapChainDesc.Windowed = !MainWindow_->IsFullScreen();
 
 	HR = Factory->CreateSwapChain(Device_, &SwapChainDesc, &SwapChain_);
 
@@ -381,7 +380,7 @@ HRESULT GraphicsManager::CreateSwapChain(HWND WindowHandle)
 	return HR;
 }
 
-HRESULT GraphicsManager::CreateRenderTargetView()
+HRESULT RenderManager::CreateRenderTargetView()
 {
 	SAFE_RELEASE(RenderTargetView_);
 
@@ -400,7 +399,7 @@ HRESULT GraphicsManager::CreateRenderTargetView()
 	return HR;
 }
 
-HRESULT GraphicsManager::CreateDepthStencilView()
+HRESULT RenderManager::CreateDepthStencilView()
 {
 	SAFE_RELEASE(DepthStencilView_);
 	SAFE_RELEASE(DepthStencilBuffer_);
@@ -408,7 +407,7 @@ HRESULT GraphicsManager::CreateDepthStencilView()
 	HRESULT HR = S_OK;
 
 	uint32_t WindowWidth = 0, WindowHeight = 0;
-	RenderTargetWindow_->GetSize<uint32_t>(WindowWidth, WindowHeight);
+	MainWindow_->GetSize<uint32_t>(WindowWidth, WindowHeight);
 
 	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc = {};
 
@@ -440,7 +439,7 @@ HRESULT GraphicsManager::CreateDepthStencilView()
 	return HR;
 }
 
-HRESULT GraphicsManager::CreateDepthStencilState(ID3D11DepthStencilState** DepthStencilState, bool bIsEnableDepth, bool bIsEnableStencil)
+HRESULT RenderManager::CreateDepthStencilState(ID3D11DepthStencilState** DepthStencilState, bool bIsEnableDepth, bool bIsEnableStencil)
 {
 	D3D11_DEPTH_STENCIL_DESC DepthStencilStateDesc = {};
 
@@ -465,7 +464,7 @@ HRESULT GraphicsManager::CreateDepthStencilState(ID3D11DepthStencilState** Depth
 	return Device_->CreateDepthStencilState(&DepthStencilStateDesc, DepthStencilState);
 }
 
-HRESULT GraphicsManager::CreateBlendState(ID3D11BlendState** BlendState, bool bIsEnable)
+HRESULT RenderManager::CreateBlendState(ID3D11BlendState** BlendState, bool bIsEnable)
 {
 	D3D11_BLEND_DESC BlendStateDesc = {};
 
@@ -481,7 +480,7 @@ HRESULT GraphicsManager::CreateBlendState(ID3D11BlendState** BlendState, bool bI
 	return Device_->CreateBlendState(&BlendStateDesc, BlendState);
 }
 
-HRESULT GraphicsManager::CreateRasterizerState(ID3D11RasterizerState** RasterizerState, bool bIsEnableCull, bool bIsEnableFill)
+HRESULT RenderManager::CreateRasterizerState(ID3D11RasterizerState** RasterizerState, bool bIsEnableCull, bool bIsEnableFill)
 {
 	D3D11_RASTERIZER_DESC RasterizerDesc;
 
