@@ -1,9 +1,10 @@
 #include "GraphicsManager.h"
-#include "CommandLineManager.h"
+#include "CommandLine.h"
 #include "Font.h"
 #include "Window.h"
 #include "Shader.h"
 #include "Math.hpp"
+#include "TextHelper.hpp"
 #include "Texture2D.h"
 #include "Primitive2DRenderShader.h"
 #include "Texture2DRenderShader.h"
@@ -28,7 +29,7 @@ void GraphicsManager::Setup(Window* RenderTargetWindow)
 	CHECK_HR(CreateRasterizerState(&RasterizerState_["Wireframe"], false, false), "failed to create wireframe mode rasterizer state");
 
 
-	std::wstring ShaderPath = CommandLineManager::Get().GetValue(L"-Shader");
+	std::wstring ShaderPath = TextHelper::Convert(CommandLine::GetValue("Shader"));
 
 	Shader_["Primitive"] = std::make_unique<Primitive2DRenderShader>(
 		Device_,

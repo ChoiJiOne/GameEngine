@@ -28,12 +28,12 @@ const std::string& Config::GetValue(const std::string& Key)
 std::unordered_map<std::string, std::string> Config::ParseConfigFromBuffer(const std::vector<uint8_t>& Buffer)
 {
 	std::string BufferString(Buffer.begin(), Buffer.end());
-	std::vector<std::string> ReadLines = Split(BufferString, "\r\n");
+	std::vector<std::string> ReadLines = TextHelper::Split(BufferString, "\r\n");
 
 	std::unordered_map<std::string, std::string> Configure;
 	for (auto& ReadLine : ReadLines)
 	{
-		std::vector<std::string> KeyValue = Split(ReadLine, "=");
+		std::vector<std::string> KeyValue = TextHelper::Split(ReadLine, "=");
 		CHECK((KeyValue.size() == 2), "invalid config key and value");
 
 		Configure.insert({ KeyValue[0], KeyValue[1] });

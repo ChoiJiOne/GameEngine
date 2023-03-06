@@ -1,5 +1,5 @@
 #include "ContentManager.h"
-#include "CommandLineManager.h"
+#include "CommandLine.h"
 #include "Config.h"
 #include "Font.h"
 #include "GraphicsManager.h"
@@ -18,7 +18,7 @@ ContentManager::ContentManager()
 	ma_result Result = ma_engine_init(nullptr, AudioEngine_.get());
 	CHECK((Result == MA_SUCCESS), "failed to initialize audio engine");
 
-	ContentPath_ = CommandLineManager::Get().GetValue("-Content");
+	ContentPath_ = CommandLine::GetValue("Content");
 	CHECK((!ContentPath_.empty()), "failed to set content path");
 }
 

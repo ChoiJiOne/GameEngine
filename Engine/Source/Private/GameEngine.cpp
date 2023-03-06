@@ -31,15 +31,15 @@ void GameEngine::CreateWindowFromConfig()
 {
 	Config& WindowConfig = ContentManager::Get().LoadConfig("Window", "Window.config");
 
-	const std::vector<std::string>& Position = Split(WindowConfig.GetValue("Position"), ",");
+	const std::vector<std::string>& Position = TextHelper::Split(WindowConfig.GetValue("Position"), ",");
 	Vec2i WindowPosition(std::stoi(Position[0]), std::stoi(Position[1]));
 
-	const std::vector<std::string>& Size = Split(WindowConfig.GetValue("Size"), ",");
+	const std::vector<std::string>& Size = TextHelper::Split(WindowConfig.GetValue("Size"), ",");
 	Vec2i WindowSize(std::stoi(Size[0]), std::stoi(Size[1]));
 
 	WindowConstructorParam Param;
 
-	Param.Title = Convert(WindowConfig.GetValue("Title"));
+	Param.Title = TextHelper::Convert(WindowConfig.GetValue("Title"));
 	Param.PositionX = WindowPosition.x;
 	Param.PositionY = WindowPosition.y;
 	Param.Width = WindowSize.x;
@@ -57,7 +57,7 @@ void GameEngine::LoadFontFromConfig()
 
 	for (const auto& FontKeyValue : FontKeyValues)
 	{
-		const std::vector<std::string>& FontInfo = Split(FontKeyValue.second, ",");
+		const std::vector<std::string>& FontInfo = TextHelper::Split(FontKeyValue.second, ",");
 
 		const std::string& FontName = FontInfo[0];
 		int32_t FontStartCodePoint = std::stoi(FontInfo[1]);
