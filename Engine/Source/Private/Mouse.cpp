@@ -14,7 +14,7 @@ void Mouse::Tick()
 	CurrWindowMousePosition_ = GetPositionFromWindow();
 }
 
-Vec2i Mouse::GetLastPosition(const EPositionType& PositionType)
+Vec2i Mouse::GetLastPosition(const EPositionType& PositionType) const
 {
 	Vec2i LastPosition;
 
@@ -36,7 +36,7 @@ Vec2i Mouse::GetLastPosition(const EPositionType& PositionType)
 	return LastPosition;
 }
 
-Vec2i Mouse::GetCurrPosition(const EPositionType& PositionType)
+Vec2i Mouse::GetCurrPosition(const EPositionType& PositionType) const
 {
 	Vec2i CurrPosition;
 
@@ -58,7 +58,7 @@ Vec2i Mouse::GetCurrPosition(const EPositionType& PositionType)
 	return CurrPosition;
 }
 
-Vec2i Mouse::GetDeltaPosition(const EPositionType& PositionType)
+Vec2i Mouse::GetDeltaPosition(const EPositionType& PositionType) const
 {
 	Vec2i DeltaPosition;
 

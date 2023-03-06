@@ -56,7 +56,7 @@ public:
 	 * 
 	 * @return Tick 호출 이전의 마우스 위치를 반환합니다.
 	 */
-	Vec2i GetLastPosition(const EPositionType& PositionType);
+	Vec2i GetLastPosition(const EPositionType& PositionType) const;
 
 
 	/**
@@ -66,7 +66,7 @@ public:
 	 * 
 	 * @return Tick 호출 이후의 마우스 위치를 반환합니다.
 	 */
-	Vec2i GetCurrPosition(const EPositionType& PositionType);
+	Vec2i GetCurrPosition(const EPositionType& PositionType) const;
 
 
 	/**
@@ -76,7 +76,7 @@ public:
 	 * 
 	 * @return Tick 호출 이후와 이전의 차이값을 반환합니다.
 	 */
-	Vec2i GetDeltaPosition(const EPositionType& PositionType);
+	Vec2i GetDeltaPosition(const EPositionType& PositionType) const;
 
 
 private:
