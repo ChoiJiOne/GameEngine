@@ -1,64 +1,32 @@
-#include "CommandLineManager.h"
+#include "CommandLine.h"
 #include "TextHelper.hpp"
-#include "Utils.hpp"
 
-#include <Windows.h>
+std::string CommandLine::ExecutePath_;
+std::unordered_map<std::string, std::string> CommandLine::ArgumentValues_;
 
-CommandLineManager::CommandLineManager()
+void CommandLine::ParseFromArgV(int32_t ArgC, char* ArgV[])
 {
-	CommandLineA_ = GetCommandLineA();
-	CommandLineW_ = GetCommandLineW();
+	ExecutePath_ = ArgV[0];
 
-	ParseCommandLineA();
-	ParseCommandLineW();
-}
-
-void CommandLineManager::ParseCommandLineA()
-{
-	ArgumentsA_ = Split(CommandLineA_, " ");
-
-	for (const auto& Argument : ArgumentsA_)
+	for (int32_t Index = 1; Index < ArgC; ++Index)
 	{
-		if (Argument.find("=") != std::string::npos)
+		std::string Argument = ArgV[Index];
+		std::vector<std::string> ArgumentElements = TextHelper::Split(Argument, "=");
+
+		if (ArgumentElements.size() == 2)
 		{
-			std::vector<std::string> Tokens = Split(Argument, "=");
-			OptionsA_.insert({ Tokens.front(), Tokens.back() });
+			ArgumentValues_.insert({ ArgumentElements.front(), ArgumentElements.back() });
 		}
 	}
 }
 
-void CommandLineManager::ParseCommandLineW()
+bool CommandLine::IsValid(const std::string& Key)
 {
-	ArgumentsW_ = Split(CommandLineW_, L" ");
-
-	for (const auto& Argument : ArgumentsW_)
-	{
-		if (Argument.find(L"=") != std::wstring::npos)
-		{
-			std::vector<std::wstring> Tokens = Split(Argument, L"=");
-			OptionsW_.insert({ Tokens.front(), Tokens.back() });
-		}
-	}
+	return (ArgumentValues_.find(Key) != ArgumentValues_.end());
 }
 
-bool CommandLineManager::HaveOption(const std::string& Option)
+std::string CommandLine::GetValue(const std::string& Key)
 {
-	return IsExistKey<std::string, std::string>(Option, OptionsA_);
-}
-
-bool CommandLineManager::HaveOption(const std::wstring& Option)
-{
-	return IsExistKey<std::wstring, std::wstring>(Option, OptionsW_);
-}
-
-std::string CommandLineManager::GetValue(const std::string& Option)
-{
-	CHECK(HaveOption(Option), "can't find command line option");
-	return OptionsA_.at(Option);
-}
-
-std::wstring CommandLineManager::GetValue(const std::wstring& Option)
-{
-	CHECK(HaveOption(Option), "can't find command line option");
-	return OptionsW_.at(Option);
+	CHECK(IsValid(Key), "not valid key value");
+	return ArgumentValues_.at(Key);
 }
