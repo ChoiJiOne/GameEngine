@@ -1,9 +1,9 @@
-#include "Timer.h"
+#include "GameTimer.h"
 #include "Macro.h"
 
 #include <windows.h>
 
-Timer::Timer()
+GameTimer::GameTimer()
 {
 	int64_t CounterPerSeconds;
 	CHECK((QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&CounterPerSeconds))), "failed to query performance frequency");
@@ -11,35 +11,35 @@ Timer::Timer()
 	SecondsPerCounter_ = 1.0 / static_cast<double>(CounterPerSeconds);
 }
 
-float Timer::GetDeltaTime() const
+float GameTimer::GetDeltaSeconds() const
 {
-	float DeltaTime = 0.0f;
+	float DeltaSeconds = 0.0f;
 
 	if (!bIsStop_)
 	{
-		DeltaTime = static_cast<float>(CurrTime_ - PrevTime_) * static_cast<float>(SecondsPerCounter_);
+		DeltaSeconds = static_cast<float>(CurrTime_ - PrevTime_) * static_cast<float>(SecondsPerCounter_);
 	}
 
-	return DeltaTime;
+	return DeltaSeconds;
 }
 
-float Timer::GetTotalTime() const
+float GameTimer::GetTotalSeconds() const
 {
-	float TotalTime = static_cast<float>(SecondsPerCounter_);
+	float TotalSeconds = static_cast<float>(SecondsPerCounter_);
 
 	if (bIsStop_)
 	{
-		TotalTime *= static_cast<float>(StopTime_ - PausedTime_ - BaseTime_);
+		TotalSeconds *= static_cast<float>(StopTime_ - PausedTime_ - BaseTime_);
 	}
 	else
 	{
-		TotalTime *= static_cast<float>(CurrTime_ - PausedTime_ - BaseTime_);
+		TotalSeconds *= static_cast<float>(CurrTime_ - PausedTime_ - BaseTime_);
 	}
 
-	return TotalTime;
+	return TotalSeconds;
 }
 
-void Timer::Reset()
+void GameTimer::Reset()
 {
 	int64_t Counter = GetTickCounter();
 
@@ -51,7 +51,7 @@ void Timer::Reset()
 	CurrTime_ = Counter;
 }
 
-void Timer::Start()
+void GameTimer::Start()
 {
 	if (bIsStop_)
 	{
@@ -64,7 +64,7 @@ void Timer::Start()
 	}
 }
 
-void Timer::Stop()
+void GameTimer::Stop()
 {
 	if (!bIsStop_)
 	{
@@ -73,13 +73,28 @@ void Timer::Stop()
 	}
 }
 
-void Timer::Tick()
+void GameTimer::Tick()
 {
 	PrevTime_ = CurrTime_;
 	CurrTime_ = GetTickCounter();
 }
 
-int64_t Timer::GetTickCounter()
+SystemTime GameTimer::GetCurrentSystemTime()
+{
+	SYSTEMTIME CurrentSystemTime;
+	GetLocalTime(&CurrentSystemTime);
+
+	return SystemTime{
+		CurrentSystemTime.wYear,
+		CurrentSystemTime.wMonth,
+		CurrentSystemTime.wDay,
+		CurrentSystemTime.wHour,
+		CurrentSystemTime.wMinute,
+		CurrentSystemTime.wSecond
+	};
+}
+
+int64_t GameTimer::GetTickCounter()
 {
 	int64_t Counter = 0LL;
 	CHECK((QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&Counter))), "failed to query performance counter");

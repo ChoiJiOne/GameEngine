@@ -4,17 +4,31 @@
 
 
 /**
- * @brief 타이머 클래스입니다.
- * 
+ * @brief 시스템 시간에 대한 구조체입니다.
+ */
+struct SystemTime
+{
+	int32_t Year;
+	int32_t Month;
+	int32_t Day;
+	int32_t Hour;
+	int32_t Minute;
+	int32_t Second;
+};
+
+
+/**
+ * @brief 게임 타이머 클래스입니다.
+ *
  * @note 타이머 클래스의 생성자는 초기화를 수행하지 않으므로 반드시 Start 혹은 Reset 메서드를 호출해야 합니다.
  */
-class Timer
+class GameTimer
 {
 public:
 	/**
 	 * @brief 타이머 클래스의 생성자입니다.
 	 */
-	Timer();
+	GameTimer();
 
 
 	/**
@@ -22,7 +36,7 @@ public:
 	 *
 	 * @param Instance 복사할 객체입니다.
 	 */
-	Timer(Timer&& Instance) noexcept
+	GameTimer(GameTimer&& Instance) noexcept
 		: bIsStop_(Instance.bIsStop_)
 		, BaseTime_(Instance.BaseTime_)
 		, PausedTime_(Instance.PausedTime_)
@@ -36,7 +50,7 @@ public:
 	 *
 	 * @param Instance 복사할 객체입니다.
 	 */
-	Timer(const Timer& Instance) noexcept
+	GameTimer(const GameTimer& Instance) noexcept
 		: bIsStop_(Instance.bIsStop_)
 		, BaseTime_(Instance.BaseTime_)
 		, PausedTime_(Instance.PausedTime_)
@@ -48,7 +62,7 @@ public:
 	/**
 	 * @brief 타이머 클래스의 가상 소멸자입니다.
 	 */
-	virtual ~Timer() = default;
+	virtual ~GameTimer() = default;
 
 
 	/**
@@ -58,7 +72,7 @@ public:
 	 *
 	 * @return 복사한 객체의 참조자를 반환합니다.
 	 */
-	Timer& operator=(Timer&& Instance) noexcept
+	GameTimer& operator=(GameTimer&& Instance) noexcept
 	{
 		if (this == &Instance) return *this;
 
@@ -80,7 +94,7 @@ public:
 	 *
 	 * @return 복사한 객체의 참조자를 반환합니다.
 	 */
-	Timer& operator=(const Timer& Instance) noexcept
+	GameTimer& operator=(const GameTimer& Instance) noexcept
 	{
 		if (this == &Instance) return *this;
 
@@ -97,22 +111,18 @@ public:
 
 	/**
 	 * @brief 타이머의 초 단위 델타 시간값을 얻습니다.
-	 * 
-	 * @note 시간 단위는 초단위입니다.
 	 *
 	 * @return 초 단위의 델타 시간값을 반환합니다.
 	 */
-	float GetDeltaTime() const;
+	float GetDeltaSeconds() const;
 
 
 	/**
-	 * @brief 타이머가 중지된 시간을 제외한 전체 시간값을 반환합니다.
-	 * 
-	 * @note 시간 단위는 초단위입니다.
+	 * @brief 타이머가 중지된 시간을 제외한 전체 초단위 시간값을 반환합니다.
 	 *
 	 * @return 타이머가 시작된 이후의 중지된 시간을 제외한 전체 시간값을 반환합니다.
 	 */
-	float GetTotalTime() const;
+	float GetTotalSeconds() const;
 
 
 	/**
@@ -123,7 +133,7 @@ public:
 
 	/**
 	 * @brief 타이머를 시작합니다.
-	 * 
+	 *
 	 * @note 타이머가 중지되어 있다면 중시된 시점부터 시작됩니다.
 	 */
 	void Start();
@@ -139,6 +149,14 @@ public:
 	 * @brief 타이머를 업데이트합니다.
 	 */
 	void Tick();
+
+
+	/**
+	 * @brief 현재 시스템 시간을 얻습니다.
+	 *
+	 * @return 현재 시스템 시간 값을 반환합니다.
+	 */
+	static SystemTime GetCurrentSystemTime();
 
 
 private:
@@ -182,7 +200,7 @@ private:
 
 
 	/**
-	 * @brief Tick 호출 시간입냅니다.
+	 * @brief Tick 호출 시간입니다.
 	 */
 	int64_t CurrTime_ = 0LL;
 
