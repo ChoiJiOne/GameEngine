@@ -1,35 +1,69 @@
-#include "ErrorHandler.h"
-#include "CommandLine.h"
+#include "CrashHandler.h"
+#include "GameTimer.h"
 #include "TextHelper.hpp"
 
-std::string ErrorHandler::LastErrorMessage_;
-std::string ErrorHandler::ErrorFileName_;
-int32_t ErrorHandler::ErrorLine_;
+std::string              CrashHandler::DumpFilePath_;
+std::vector<std::string> CrashHandler::CallStack_;
+std::string              CrashHandler::LastErrorMessage_;
+std::string              CrashHandler::ErrorFileName_;
+int32_t                  CrashHandler::ErrorLine_;
 
-LONG ErrorHandler::GenerateCrashDump(EXCEPTION_POINTERS* ExceptionInfo)
+LONG CrashHandler::DetectApplicationCrash(EXCEPTION_POINTERS* ExceptionPointer)
 {
-	SYSTEMTIME CurrentSystemTime;
-	GetLocalTime(&CurrentSystemTime);
+	GenerateCrashDumpFile(ExceptionPointer);
+	RecordCallStackFromCrash(ExceptionPointer);
 
-	std::string CrashDumpFile = Format(
-		"%s%d-%d-%d-%d-%d-%d.dmp",
-		CommandLineManager::Get().GetValue("-Dump").c_str(),
-		CurrentSystemTime.wYear,
-		CurrentSystemTime.wMonth,
-		CurrentSystemTime.wDay,
-		CurrentSystemTime.wHour,
-		CurrentSystemTime.wMinute,
-		CurrentSystemTime.wSecond
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+void CrashHandler::ShowCrashMessageBox()
+{
+#if defined(SHIPPING) // SHIPPING 활성화 시 소스 코드에 대한 정보 표시 비활성화
+	std::string ShowCrashMessage = Format(
+		"MESSAGE: %s",
+		LastErrorMessage_.c_str()
+	);
+#else
+	std::string ShowCrashMessage = TextHelper::Format("FILE: %s\nLINE: %d\nMESSAGE: %s\nCALLSTACK:\n", ErrorFileName_.c_str(), ErrorLine_, LastErrorMessage_.c_str());
+
+	for (const auto& CallStackElement : CallStack_)
+	{
+		ShowCrashMessage += CallStackElement + "\n";
+	}
+#endif
+
+	int32_t Successed = MessageBoxA(nullptr, ShowCrashMessage.c_str(), "Crash Application", MB_OK);
+	if (!Successed)
+	{
+#if defined(DEBUG) || defined(_DEBUG)
+		OutputDebugStringA("failed to show message box");
+#endif
+	}
+}
+
+void CrashHandler::GenerateCrashDumpFile(EXCEPTION_POINTERS* ExceptionPointer)
+{
+	SystemTime CurrentSystemTime = GameTimer::GetCurrentSystemTime();
+
+	std::string CrashDumpFilePath = TextHelper::Format(
+		"%sWindows-%d-%d-%d-%d-%d-%d.dmp",
+		DumpFilePath_.c_str(),
+		CurrentSystemTime.Year,
+		CurrentSystemTime.Month,
+		CurrentSystemTime.Day,
+		CurrentSystemTime.Hour,
+		CurrentSystemTime.Minute,
+		CurrentSystemTime.Second
 	);
 
 	HANDLE  FileHandle = CreateFileA(
-		CrashDumpFile.c_str(),
+		CrashDumpFilePath.c_str(),
 		GENERIC_WRITE,
 		FILE_SHARE_WRITE,
-		NULL,
+		nullptr,
 		CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL,
-		NULL
+		nullptr
 	);
 
 	if (FileHandle != INVALID_HANDLE_VALUE)
@@ -38,10 +72,10 @@ LONG ErrorHandler::GenerateCrashDump(EXCEPTION_POINTERS* ExceptionInfo)
 
 		_MINIDUMP_EXCEPTION_INFORMATION Exception;
 		Exception.ThreadId = GetCurrentThreadId();
-		Exception.ExceptionPointers = ExceptionInfo;
+		Exception.ExceptionPointers = ExceptionPointer;
 		Exception.ClientPointers = FALSE;
 
-		Successed = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), FileHandle, MiniDumpNormal, &Exception, NULL, NULL);
+		Successed = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), FileHandle, MiniDumpNormal, &Exception, nullptr, nullptr);
 		if (!Successed)
 		{
 #if defined(DEBUG) || defined(_DEBUG)
@@ -63,31 +97,68 @@ LONG ErrorHandler::GenerateCrashDump(EXCEPTION_POINTERS* ExceptionInfo)
 		OutputDebugStringA("failed to generate crash dump file");
 #endif
 	}
-
-	return EXCEPTION_EXECUTE_HANDLER;
 }
 
-void ErrorHandler::ShowErrorMessageBox()
+void CrashHandler::RecordCallStackFromCrash(EXCEPTION_POINTERS* ExceptionPointer)
 {
-#if defined(SHIPPING) // Shipping 모드 시 소스 코드에 대한 정보 유출 방지
-	std::string ShowErrorMessage = Format(
-		"MESSAGE: %s",
-		LastErrorMessage_.c_str()
-	);
-#else
-	std::string ShowErrorMessage = Format(
-		"FILE: %s\nLINE: %d\nMESSAGE: %s",
-		ErrorFileName_.c_str(),
-		ErrorLine_,
-		LastErrorMessage_.c_str()
-	);
-#endif
+	HANDLE CurrentProcess = GetCurrentProcess();
+	HANDLE CurrentThread = GetCurrentThread();
 
-	int32_t Successed = MessageBoxA(nullptr, ShowErrorMessage.c_str(), "Error Message", MB_OK);
-	if (!Successed)
+	if (SymInitialize(CurrentProcess, nullptr, TRUE))
+	{
+		CONTEXT* CurrentCrashContext = ExceptionPointer->ContextRecord;
+
+		STACKFRAME64 StackFrame = { };
+		StackFrame.AddrPC.Offset = CurrentCrashContext->Rip;
+		StackFrame.AddrPC.Mode = AddrModeFlat;
+		StackFrame.AddrFrame.Offset = CurrentCrashContext->Rbp;
+		StackFrame.AddrFrame.Mode = AddrModeFlat;
+		StackFrame.AddrStack.Offset = CurrentCrashContext->Rsp;
+		StackFrame.AddrStack.Mode = AddrModeFlat;
+
+		std::vector<DWORD64> Addresses;
+		DWORD MachineType = GetMachineType();
+
+		while (StackWalk64(MachineType, CurrentProcess, CurrentThread, &StackFrame, CurrentCrashContext, nullptr, SymFunctionTableAccess64, SymGetModuleBase64, nullptr))
+		{
+			if (StackFrame.AddrFrame.Offset == 0)
+			{
+				break;
+			}
+			else
+			{
+				Addresses.push_back(StackFrame.AddrPC.Offset);
+			}
+		}
+
+		std::vector<uint8_t> SymbolBuffer(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR));
+		PSYMBOL_INFO Symbol = reinterpret_cast<PSYMBOL_INFO>(&SymbolBuffer[0]);
+		Symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+		Symbol->MaxNameLen = MAX_SYM_NAME;
+
+		for (auto& Address : Addresses)
+		{
+			if (SymFromAddr(CurrentProcess, Address, nullptr, Symbol))
+			{
+				std::string StackElement = TextHelper::Format("%s-0x%0X", Symbol->Name, Symbol->Address);
+				CallStack_.push_back(StackElement);
+			}
+		}
+	}
+	else
 	{
 #if defined(DEBUG) || defined(_DEBUG)
-		OutputDebugStringA("failed to show message box");
+		OutputDebugStringA("failed to initialize current process");
 #endif
 	}
+}
+
+DWORD CrashHandler::GetMachineType()
+{
+	HMODULE CurrentModule = GetModuleHandle(nullptr);
+
+	PIMAGE_DOS_HEADER DosHeader = reinterpret_cast<PIMAGE_DOS_HEADER>(CurrentModule);
+	PIMAGE_NT_HEADERS NtHeaders = reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<BYTE*>(CurrentModule) + DosHeader->e_lfanew);
+
+	return static_cast<DWORD>(NtHeaders->FileHeader.Machine);
 }
