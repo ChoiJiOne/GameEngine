@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ErrorHandler.h"
+#include "CrashHandler.h"
 
 
 /**
@@ -49,7 +49,7 @@ CLASS& operator=(const CLASS&) = delete;
 {\
 	if(!EXPRESSION)\
 	{\
-		ErrorHandler::SetErrorInfo(__FILE__, __LINE__, MESSAGE);\
+		CrashHandler::RecordCrashInfo(__FILE__, __LINE__, MESSAGE);\
 		throw std::exception();\
 	}\
 }
@@ -69,7 +69,7 @@ CLASS& operator=(const CLASS&) = delete;
 {\
 	if(((HRESULT)(EXPRESSION)) < 0)\
 	{\
-		ErrorHandler::SetErrorInfo(__FILE__, __LINE__, MESSAGE);\
+		CrashHandler::RecordCrashInfo(__FILE__, __LINE__, MESSAGE);\
 		throw std::exception();\
 	}\
 }
@@ -86,7 +86,7 @@ CLASS& operator=(const CLASS&) = delete;
 #ifndef ENFORCE_THROW_EXCEPTION
 #define ENFORCE_THROW_EXCEPTION(MESSAGE)\
 {\
-	ErrorHandler::SetErrorInfo(__FILE__, __LINE__, MESSAGE);\
+	CrashHandler::RecordCrashInfo(__FILE__, __LINE__, MESSAGE);\
 	throw std::exception();\
 }
 #endif
