@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Macro.h"
-#include "Random.h"
 
 #include <array>
 #include <vector>
+#include <chrono>
+#include <random>
 #include <unordered_map>
 
 
@@ -97,21 +98,38 @@ inline void ReadBufferFromFile(const std::wstring& Path, std::vector<uint8_t>& B
 
 
 /**
- * @brief 2차원 배열의 버퍼 Offset을 얻습니다.
- * 
- * @param Col 2차원 배열의 가로 위치입니다.
- * @param Row 2차원 배열의 세로 위치입니다.
- * @param Width 2차원 배열의 가로 크기입니다.
- * @param Height 2차원 배열의 세로 크기입니다.
- * 
- * @thows 배열의 범위를 벗어나면 C++ 표준 예외를 던집니다.
- * 
- * @return 배열의 Offset을 반환합니다.
+ * @brief 임의의 정수를 생성합니다.
+ *
+ * @param MinValue 생성할 난수 범위의 최솟값입니다.
+ * @param MaxValue 생성할 난수 범위의 최댓값입니다.
+ *
+ * @return 생성된 임의의 정수를 반환합니다.
  */
-inline int32_t GetOffset(int32_t Col, int32_t Row, int32_t Width, int32_t Height)
+inline int32_t GenerateRandomInt(int32_t MinValue, int32_t MaxValue)
 {
-	CHECK((0 <= Col && Col < Width && 0 <= Row && Row < Height), "out of range 2d array buffer");
-	return Row * Width + Col;
+	std::random_device RandomDevice;
+	std::mt19937 Generator(RandomDevice());
+	std::uniform_int_distribution<int32_t> Distribution(std::min<int32_t>(MinValue, MaxValue), std::max<int32_t>(MinValue, MaxValue));
+
+	return Distribution(Generator);
+}
+
+
+/**
+ * @brief 임의의 실수를 생성합니다.
+ *
+ * @param MinValue 생성할 난수 범위의 최솟값입니다.
+ * @param MaxValue 생성할 난수 범위의 최댓값입니다.
+ *
+ * @return 생성된 임의의 실수를 반환합니다.
+ */
+inline float GenerateRandomFloat(float MinValue, float MaxValue)
+{
+	std::random_device RandomDevice;
+	std::mt19937 Generator(RandomDevice());
+	std::uniform_real_distribution<float> Distribution(std::min<float>(MinValue, MaxValue), std::max<float>(MinValue, MaxValue));
+
+	return Distribution(Generator);
 }
 
 
