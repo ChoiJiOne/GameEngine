@@ -60,7 +60,7 @@ SET option=%1
 Engine\\\\Script\\\\Build.bat {0} {1} %option%""".format(project_option["project"], project_option["visualstudio"])
 
     git_ignore_source = """{0}
-.dmp
+*.dmp
 .vs
 """.format(project_option["project"])
     
