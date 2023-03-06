@@ -134,7 +134,7 @@ inline float GenerateRandomFloat(float MinValue, float MaxValue)
 
 
 /**
- * @brief 정적 배열(array)에서 임의의 원소를 추출합니다.
+ * @brief 정적 배열(array)에서 임의의 원소를 선택합니다.
  * 
  * @param Elements 임의의 원소를 추출할 배열입니다.
  * 
@@ -149,7 +149,7 @@ inline const T& GetRandomElement(const std::array<T, N>& Elements)
 
 
 /**
- * @brief 동적 배열(vector)에서 임의의 원소를 추출합니다.
+ * @brief 동적 배열(vector)에서 임의의 원소를 선택합니다.
  * 
  * @param Elements 임의의 원소를 추출할 배열입니다.
  * 
