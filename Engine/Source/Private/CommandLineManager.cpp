@@ -1,5 +1,5 @@
 #include "CommandLineManager.h"
-#include "Text.hpp"
+#include "TextHelper.hpp"
 #include "Utils.hpp"
 
 #include <Windows.h>

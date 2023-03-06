@@ -1,5 +1,5 @@
 #include "Config.h"
-#include "Text.hpp"
+#include "TextHelper.hpp"
 #include "Utils.hpp"
 
 #include  <vector>

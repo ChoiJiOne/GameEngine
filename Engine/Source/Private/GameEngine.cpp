@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "GraphicsManager.h"
 #include "Shader.h"
-#include "Text.hpp"
+#include "TextHelper.hpp"
 #include "Window.h"
 
 GameEngine::~GameEngine()
