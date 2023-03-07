@@ -3,92 +3,40 @@
 Mouse::Mouse(HWND WindowHandle)
 	: WindowHandle_(WindowHandle)
 {
+	ButtonPressState_.insert({ EVirtualButton::CODE_LEFT, false });
+	ButtonPressState_.insert({ EVirtualButton::CODE_RIGHT, false });
 }
 
 void Mouse::Tick()
 {
-	LastScreenMousePosition_ = CurrScreenMousePosition_;
 	LastWindowMousePosition_ = CurrWindowMousePosition_;
+	CurrWindowMousePosition_ = GetCurrentPosition();
 
-	CurrScreenMousePosition_ = GetPositionFromScreen();
-	CurrWindowMousePosition_ = GetPositionFromWindow();
+	Vec2i DeltaPosition = GetDeltaPosition();
+	bIsMove_ = !(DeltaPosition.x == 0 && DeltaPosition.y == 0);
 }
 
-Vec2i Mouse::GetLastPosition(const EPositionType& PositionType) const
+Vec2i Mouse::GetPosition() const
 {
-	Vec2i LastPosition;
-
-	switch (PositionType)
-	{
-	case EPositionType::WINDOW:
-		LastPosition = LastWindowMousePosition_;
-		break;
-
-	case EPositionType::SCREEN:
-		LastPosition = LastScreenMousePosition_;
-		break;
-
-	default:
-		ENFORCE_THROW_EXCEPTION("undefine position type...");
-		break;
-	}
-
-	return LastPosition;
+	return CurrWindowMousePosition_;
 }
 
-Vec2i Mouse::GetCurrPosition(const EPositionType& PositionType) const
+Vec2i Mouse::GetDeltaPosition() const
 {
-	Vec2i CurrPosition;
-
-	switch (PositionType)
-	{
-	case EPositionType::WINDOW:
-		CurrPosition = CurrWindowMousePosition_;
-		break;
-
-	case EPositionType::SCREEN:
-		CurrPosition = CurrScreenMousePosition_;
-		break;
-
-	default:
-		ENFORCE_THROW_EXCEPTION("undefine position type...");
-		break;
-	}
-
-	return CurrPosition;
+	return CurrWindowMousePosition_ - LastWindowMousePosition_;
 }
 
-Vec2i Mouse::GetDeltaPosition(const EPositionType& PositionType) const
+bool Mouse::IsPressButton(EVirtualButton VirtualButton)
 {
-	Vec2i DeltaPosition;
-
-	switch (PositionType)
-	{
-	case EPositionType::WINDOW:
-		DeltaPosition = CurrWindowMousePosition_ - LastWindowMousePosition_;
-		break;
-
-	case EPositionType::SCREEN:
-		DeltaPosition = CurrScreenMousePosition_ - LastScreenMousePosition_;
-		break;
-
-	default:
-		ENFORCE_THROW_EXCEPTION("undefine position type...");
-		break;
-	}
-
-	return DeltaPosition;
+	return ButtonPressState_[VirtualButton];
 }
 
-Vec2i Mouse::GetPositionFromScreen()
+void Mouse::SetButtonPressState(EVirtualButton VirtualButton, bool bIsPressed)
 {
-	POINT MousePosition;
-	CHECK(GetCursorPos(&MousePosition), "failed to get current mouse position");
-
-	return Vec2i(static_cast<int32_t>(MousePosition.x), static_cast<int32_t>(MousePosition.y));
+	ButtonPressState_[VirtualButton] = bIsPressed;
 }
 
-Vec2i Mouse::GetPositionFromWindow()
+Vec2i Mouse::GetCurrentPosition()
 {
 	POINT MousePosition;
 

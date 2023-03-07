@@ -1,9 +1,20 @@
 #pragma once
 
-#include <Windows.h>
-
 #include "Macro.h"
 #include "Vector.hpp"
+
+#include <windows.h>
+#include <unordered_map>
+
+
+/**
+ * @brief 마우스의 가상 버튼의 코드 값입니다.
+ */
+enum class EVirtualButton
+{
+	CODE_LEFT  = 0x00,
+	CODE_RIGHT = 0x01,
+};
 
 
 /**
@@ -11,17 +22,6 @@
  */
 class Mouse
 {
-public:
-	/**
-	 * @brief 마우스 위치의 타입입니다.
-	 */
-	enum class EPositionType : int32_t
-	{
-		SCREEN = 0,
-		WINDOW = 1
-	};
-
-
 public:
 	/**
 	 * @brief 마우스의 상태를 관리하는 클래스의 생성자입니다.
@@ -50,52 +50,59 @@ public:
 
 
 	/**
-	 * @brief Tick 호출 이전의 마우스 위치를 얻습니다.
-	 * 
-	 * @param PositionType 마우스 위치의 종류입니다.
-	 * 
-	 * @return Tick 호출 이전의 마우스 위치를 반환합니다.
-	 */
-	Vec2i GetLastPosition(const EPositionType& PositionType) const;
-
-
-	/**
-	 * @brief Tick 호출 이후의 마우스 위치를 얻습니다.
-	 * 
-	 * @param PositionType 마우스 위치의 종류입니다.
+	 * @brief 현재 마우스 위치를 얻습니다.
 	 * 
 	 * @return Tick 호출 이후의 마우스 위치를 반환합니다.
 	 */
-	Vec2i GetCurrPosition(const EPositionType& PositionType) const;
+	Vec2i GetPosition() const;
 
 
 	/**
 	 * @brief Tick 호출 이후와 이전의 차이값을 얻습니다.
 	 * 
-	 * @param PositionType 마우스 위치의 종류입니다.
-	 * 
 	 * @return Tick 호출 이후와 이전의 차이값을 반환합니다.
 	 */
-	Vec2i GetDeltaPosition(const EPositionType& PositionType) const;
+	Vec2i GetDeltaPosition() const;
 
+
+	/**
+	 * @brief 마우스가 움직이는지 확인합니다.
+	 * 
+	 * @return 마우스가 움직인다면 true, 그렇지 않다면 false를 반환합니다.
+	 */
+	bool IsMove() const { return bIsMove_; }
+
+
+	/**
+	 * @brief 마우스 버튼의 입력 상태를 얻습니다.
+	 *
+	 * @param VirtualButton 입력 상태를 얻을 마우스 버튼입니다.
+	 *
+	 * @return 마우스 버튼이 눌려있다면 true, 그렇지 않으면 false를 반환합니다.
+	 */
+	bool IsPressButton(EVirtualButton VirtualButton);
+
+
+	/**
+	 * @brief 마우스 버튼의 입력 상태를 설정합니다.
+	 * 
+	 * @note InputManager 외에는 반드시 호출하면 안돼는 메서드입니다.
+	 * 
+	 * @param VirtualButton 입력 상태를 설정할 마우스 버튼입니다.
+	 * @param bIsPressed 마우스의 입력 상태입니다.
+	 */
+	void SetButtonPressState(EVirtualButton VirtualButton, bool bIsPressed);
+	
 
 private:
 	/**
-	 * @brief 모니터를 기준으로 현재 마우스의 위치를 얻습니다.
+	 * @brief 현재 마우스의 위치를 얻습니다.
 	 *
+	 * @note 기준은 현재 윈도우 창입니다.
+	 * 
 	 * @return 모니터를 기준으로 현재 마우스의 (X, Y) 위치를 반환합니다.
 	 */
-	Vec2i GetPositionFromScreen();
-
-
-	/**
-	 * @brief 윈도우를 기준으로 현재 마우스의 위치를 얻습니다.
-	 *
-	 * @see https://stackoverflow.com/questions/6423729/get-current-cursor-position
-	 *
-	 * @return 윈도우를 기준으로 현재 마우스의 (X, Y) 위치를 반환합니다.
-	 */
-	Vec2i GetPositionFromWindow();
+	Vec2i GetCurrentPosition();
 
 
 private:
@@ -106,21 +113,21 @@ private:
 
 
 	/**
-	 * @brief 업데이트 이전(Tick 호출 이전)의 화면 기준 마우스 위치입니다.
+	 * @brief 마우스가 움직이는지 확인합니다.
 	 */
-	Vec2i LastScreenMousePosition_;
+	bool bIsMove_ = false;
+
+
+	/**
+	 * @brief 마우스가 눌렸는지 확인합니다.
+	 */
+	std::unordered_map<EVirtualButton, bool> ButtonPressState_;
 
 
 	/**
 	 * @brief 업데이트 이전(Tick 호출 이전)의 윈도우 기준 마우스 위치입니다.
 	 */
 	Vec2i LastWindowMousePosition_;
-
-
-	/**
-	 * @brief 업데이트 후(Tick 호출 후)의 화면 기준 마우스 위치입니다.
-	 */
-	Vec2i CurrScreenMousePosition_;
 
 
 	/**

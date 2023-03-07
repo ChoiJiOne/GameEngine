@@ -71,18 +71,22 @@ LRESULT InputManager::ProcessWindowMessage(HWND WindowHandle, uint32_t Message, 
 		break;
 
 	case WM_LBUTTONDOWN:
+		Mouse_->SetButtonPressState(EVirtualButton::CODE_LEFT, true);
 		WindowEvent = EWindowEvent::LBUTTONDOWN;
 		break;
 
 	case WM_LBUTTONUP:
+		Mouse_->SetButtonPressState(EVirtualButton::CODE_LEFT, false);
 		WindowEvent = EWindowEvent::LBUTTONUP;
 		break;
 
 	case WM_RBUTTONDOWN:
+		Mouse_->SetButtonPressState(EVirtualButton::CODE_RIGHT, true);
 		WindowEvent = EWindowEvent::RBUTTONDOWN;
 		break;
 
 	case WM_RBUTTONUP:
+		Mouse_->SetButtonPressState(EVirtualButton::CODE_RIGHT, false);
 		WindowEvent = EWindowEvent::RBUTTONUP;
 		break;
 
