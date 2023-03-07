@@ -57,7 +57,7 @@ public:
 	template<typename T, typename... Types>
 	T* AddComponent(const std::string& Key, Types... Args)
 	{
-		if (IsExistComponent(Key)) return nullptr;
+		if (IsValidComponent(Key)) return nullptr;
 
 		std::unique_ptr<T> NewComponent = std::make_unique<T>(this, Args...);
 		Components_.insert({ Key, std::move(NewComponent) });
@@ -76,7 +76,7 @@ public:
 	template<typename T>
 	T* GetComponent(const std::string& Key)
 	{
-		if (!IsExistComponent(Key)) return nullptr;
+		if (!IsValidComponent(Key)) return nullptr;
 
 		return reinterpret_cast<T*>(Components_.at(Key).get());
 	}
@@ -92,7 +92,7 @@ public:
 	template<typename T>
 	void RemoveComponent(const std::string& Key)
 	{
-		if (IsExistComponent(Key))
+		if (IsValidComponent(Key))
 		{
 			RemoveValue<std::string, std::unique_ptr<Component>>(Key, Components_);
 		}
@@ -100,13 +100,13 @@ public:
 
 
 	/**
-	 * @brief 키 값에 대응하는 컴포넌트가 존재하는지 검사합니다.
+	 * @brief 컴포넌트의 키 값이 유효한지 검사합니다.
 	 *
 	 * @param Key 검사를 수행할 키 값입니다.
 	 *
 	 * @return 키 값에 대응하는 컴포넌트가 존재하면 true, 그렇지 않으면 false를 반환합니다.
 	 */
-	bool IsExistComponent(const std::string& Key)
+	bool IsValidComponent(const std::string& Key)
 	{
 		return IsExistKey<std::string, std::unique_ptr<Component>>(Key, Components_);
 	}
