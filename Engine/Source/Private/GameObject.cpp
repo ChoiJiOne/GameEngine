@@ -8,8 +8,8 @@ GameObject::GameObject(const std::string& Signature)
 
 GameObject::~GameObject()
 {
-	for (auto& ObjectComponent : Components_)
+	for (auto& OwnComponent : Components_)
 	{
-		ObjectComponent.second.reset();
+		OwnComponent.second.reset();
 	}
 }
