@@ -2,6 +2,7 @@
 
 #include "Macro.h"
 
+#include <functional>
 #include <vector>
 
 
@@ -223,6 +224,17 @@ public:
 	static const int32_t VIRTUAL_KEYS = 256;
 
 
+	/**
+	 * @brief 키 값의 입력 상태에 따른 동작입니다.
+	 */
+	struct KeyAction
+	{
+		EVirtualKey VirtualKey;
+		EKeyPressState PressState;
+		std::function<void()> Action;
+	};
+
+
 public:
 	/**
 	 * @brief 키보드의 키 상태를 관리하는 클래스의 생성자입니다.
@@ -253,6 +265,25 @@ public:
 	 */
 	EKeyPressState GetKeyPressState(const EVirtualKey& VirtualKey) const;
 
+
+	/**
+	 * @brief 키의 입력 상태에 따른 동작을 바인딩합니다.
+	 * 
+	 * @note 이름이 중복되면, 기존의 이벤트는 덮어 써집니다.
+	 * 
+	 * @param Name 바인딩할 키 액션의 이름입니다.
+	 * @param Action 바인딩할 액션입니다.
+	 */
+	void BindKeyAction(const std::string& Name, const KeyAction& Action);
+
+
+	/**
+	 * @brief 바인딩된 키의 입력 상태에 따른 동작을 언바인딩합니다.
+	 * 
+	 * @param Name 바인딩을 해제할 액션의 이름입니다.
+	 */
+	void UnbindKeyAction(const std::string& Name);
+
 	
 private:
 	/**
@@ -277,4 +308,10 @@ private:
 	 * @brief 업데이트 후(Tick 호출 후)의 키보드 상태입니다.
 	 */
 	std::vector<uint8_t> CurrKeyboardState_;
+
+
+	/**
+	 * @brief 키 값에 대응하는 키 액션입니다.
+	 */
+	std::unordered_map<std::string, KeyAction> KeyActions_;
 };
