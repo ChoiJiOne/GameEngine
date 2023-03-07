@@ -37,9 +37,9 @@ public:
 	 *
 	 * @return 이 컴포넌트를 소유하고 있는 게임 오브젝트의 포인터를 반환합니다.
 	 */
-	GameObject* GetGameObject() { return Object_; }
+	GameObject* GetOwnerObject() { return Object_; }
 
-
+	
 private:
 	/**
 	 * @brief 이 컴포넌트를 소유하고 있는 게임 오브젝트입니다.
