@@ -89,6 +89,10 @@ LRESULT InputManager::ProcessWindowMessage(HWND WindowHandle, uint32_t Message, 
 	case WM_MOUSEMOVE:
 		WindowEvent = EWindowEvent::MOUSEMOVE;
 		break;
+
+	case WM_MOUSEHWHEEL:
+		WindowEvent = (HIWORD(WParam) > 0) ? EWindowEvent::MOUSEWHEELUP : EWindowEvent::MOUSEWHEELDOWN;
+		break;
 	
 	case WM_CLOSE:
 		WindowEvent = EWindowEvent::CLOSE;
