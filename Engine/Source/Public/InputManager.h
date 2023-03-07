@@ -131,11 +131,27 @@ public:
 
 
 	/**
+	 * @brief InputManager가 관리하는 키보드를 얻습니다.
+	 *
+	 * @return InputManager가 관리하는 키보드의 참조자를 반환합니다.
+	 */
+	Keyboard& GetKeyboard() { return *Keyboard_.get(); }
+
+
+	/**
 	 * @brief InputManager가 관리하는 마우스를 얻습니다.
 	 * 
 	 * return InputManager가 관리하는 키보드의 상수 참조자를 반환합니다.
 	 */
 	const Mouse& GetMouse() const { return *Mouse_.get(); }
+
+
+	/**
+	 * @brief InputManager가 관리하는 마우스를 얻습니다.
+	 *
+	 * return InputManager가 관리하는 키보드의 참조자를 반환합니다.
+	 */
+	Mouse& GetMouse() { return *Mouse_.get(); }
 
 
 private:
