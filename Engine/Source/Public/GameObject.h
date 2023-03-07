@@ -55,38 +55,38 @@ public:
 	/**
 	 * @brief 게임 오브젝트에 컴포넌트를 추가합니다.
 	 * 
-	 * @note 키 값에 대응하는 컴포넌트가 존재한다면 아무런 동작도 수행하지 않습니다.
+	 * @note 이름에 대응하는 컴포넌트가 존재한다면 아무런 동작도 수행하지 않습니다.
 	 *
-	 * @param Key 추가할 컴포넌트의 키값입니다.
+	 * @param Name 추가할 컴포넌트의 이름입니다.
 	 * @param Args 컴포넌트에 필요한 가변 인자입니다.
 	 * 
 	 * @return 추가한 컴포넌트의 포인터 값을 반환합니다.
 	 */
 	template<typename T, typename... Types>
-	T* AddComponent(const std::string& Key, Types... Args)
+	T* AddComponent(const std::string& Name, Types... Args)
 	{
-		if (IsValidComponent(Key)) return nullptr;
+		if (IsValidComponent(Name)) return nullptr;
 
 		std::unique_ptr<T> NewComponent = std::make_unique<T>(this, Args...);
-		Components_.insert({ Key, std::move(NewComponent) });
+		Components_.insert({ Name, std::move(NewComponent) });
 
-		return reinterpret_cast<T*>(Components_[Key].get());
+		return reinterpret_cast<T*>(Components_[Name].get());
 	}
 
 
 	/**
 	 * @brief 게임 오브젝트가 소유하고 있는 컴포넌트를 얻습니다.
 	 *
-	 * @param Key 게임 오브젝트가 소유하고 있는 컴포넌트의 키 값입니다.
+	 * @param Name 게임 오브젝트가 소유하고 있는 컴포넌트의 이름입니다.
 	 *
 	 * @return 키 값에 대응하는 컴포넌트가 존재하면 주소 값을 반환, 그렇지 않으면 nullptr를 반환합니다.
 	 */
 	template<typename T>
-	T* GetComponent(const std::string& Key)
+	T* GetComponent(const std::string& Name)
 	{
-		if (!IsValidComponent(Key)) return nullptr;
+		if (!IsValidComponent(Name)) return nullptr;
 
-		return reinterpret_cast<T*>(Components_.at(Key).get());
+		return reinterpret_cast<T*>(Components_.at(Name).get());
 	}
 
 
@@ -95,14 +95,14 @@ public:
 	 * 
 	 * @note 키 값에 대응하는 컴포넌트가 존재하지 않는다면, 아무런 동작도 하지 않습니다.
 	 *
-	 * @param Key 게임 오브젝트가 소유하고 있는 컴포넌트의 키 값입니다.
+	 * @param Name 게임 오브젝트가 소유하고 있는 컴포넌트의 이름입니다.
 	 */
 	template<typename T>
-	void RemoveComponent(const std::string& Key)
+	void RemoveComponent(const std::string& Name)
 	{
-		if (IsValidComponent(Key))
+		if (IsValidComponent(Name))
 		{
-			RemoveValue<std::string, std::unique_ptr<Component>>(Key, Components_);
+			RemoveValue<std::string, std::unique_ptr<Component>>(Name, Components_);
 		}
 	}
 
@@ -110,13 +110,13 @@ public:
 	/**
 	 * @brief 컴포넌트의 키 값이 유효한지 검사합니다.
 	 *
-	 * @param Key 검사를 수행할 키 값입니다.
+	 * @param Name 검사를 수행할 이름입니다.
 	 *
 	 * @return 키 값에 대응하는 컴포넌트가 존재하면 true, 그렇지 않으면 false를 반환합니다.
 	 */
-	bool IsValidComponent(const std::string& Key)
+	bool IsValidComponent(const std::string& Name)
 	{
-		return IsExistKey<std::string, std::unique_ptr<Component>>(Key, Components_);
+		return IsExistKey<std::string, std::unique_ptr<Component>>(Name, Components_);
 	}
 
 
