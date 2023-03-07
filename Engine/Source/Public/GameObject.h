@@ -45,6 +45,14 @@ public:
 
 
 	/**
+	 * @brief 게임 오브젝트의 시그니처를 얻습니다.
+	 * 
+	 * @return 게임 오브젝트의 시그니처 값을 반환합니다.
+	 */
+	std::string GetSignature() const { return Signature_; }
+
+
+	/**
 	 * @brief 게임 오브젝트에 컴포넌트를 추가합니다.
 	 * 
 	 * @note 키 값에 대응하는 컴포넌트가 존재한다면 아무런 동작도 수행하지 않습니다.
