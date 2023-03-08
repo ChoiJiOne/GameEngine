@@ -51,34 +51,11 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 		InputManager::Get().BindWindowEvent(WindowEvent.first, WindowEvent.second);
 	}
 
-	LinearColor ClearColor = LinearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	InputManager::Get().GetKeyboard().BindKeyAction(
-		"LEFT",
-		Keyboard::KeyAction{
-			EVirtualKey::CODE_LEFT,
-			EKeyPressState::PRESSED,
-			[&]() {
-				ClearColor = LinearColor(1.0f, 0.0f, 0.0f, 1.0f);
-			}
-		}
-	);
-
-	InputManager::Get().GetKeyboard().BindKeyAction(
-		"RIGHT",
-		Keyboard::KeyAction{
-			EVirtualKey::CODE_RIGHT,
-			EKeyPressState::PRESSED,
-			[&]() {
-				ClearColor = LinearColor(1.0f, 0.0f, 1.0f, 1.0f);
-			}
-		}
-	);
-
 	while (!bIsDone_)
 	{
 		InputManager::Get().Tick();
 
-		RenderManager::Get().Clear(ClearColor);
+		RenderManager::Get().Clear(BLACK);
 		RenderManager::Get().Present();
 	}
 
