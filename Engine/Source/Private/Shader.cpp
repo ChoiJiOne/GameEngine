@@ -2,15 +2,6 @@
 
 #include <d3dcompiler.h>
 
-Shader::~Shader()
-{
-	SAFE_RELEASE(InputLayout_);
-	SAFE_RELEASE(VertexShaderSource_);
-	SAFE_RELEASE(VertexShader_);
-	SAFE_RELEASE(PixelShaderSource_);
-	SAFE_RELEASE(PixelShader_);
-}
-
 HRESULT Shader::CompileShaderFromFile(const std::wstring& SourcePath, const std::string& EntryPoint, const std::string& ShaderModel, ID3DBlob** Blob)
 {
 	HRESULT HR = S_OK;
@@ -37,50 +28,67 @@ HRESULT Shader::CompileShaderFromFile(const std::wstring& SourcePath, const std:
 	return HR;
 }
 
-HRESULT Shader::CreateVertexShaderFromFile(ID3D11Device* Device, const std::wstring& SourcePath)
+HRESULT Shader::CreateVertexShaderFromFile(
+	ID3D11Device* Device, 
+	const std::wstring& SourcePath,
+	ID3DBlob** VertexShaderSource,
+	ID3D11VertexShader** VertexShader
+)
 {
-	SAFE_RELEASE(VertexShaderSource_);
-	SAFE_RELEASE(VertexShader_);
-
 	HRESULT HR = S_OK;
 
-	HR = CompileShaderFromFile(SourcePath, "main", "vs_4_0_level_9_3", &VertexShaderSource_);
+	HR = CompileShaderFromFile(SourcePath, "main", "vs_4_0_level_9_3", VertexShaderSource);
 
 	if (SUCCEEDED(HR))
 	{
-		HR = Device->CreateVertexShader(VertexShaderSource_->GetBufferPointer(), VertexShaderSource_->GetBufferSize(), nullptr, &VertexShader_);
+		HR = Device->CreateVertexShader(
+			(*VertexShaderSource)->GetBufferPointer(),
+			(*VertexShaderSource)->GetBufferSize(),
+			nullptr, 
+			VertexShader
+		);
 	}
 	
 	return HR;
 }
 
-HRESULT Shader::CreatePixelShaderFromFile(ID3D11Device* Device, const std::wstring& SourcePath)
+HRESULT Shader::CreatePixelShaderFromFile(
+	ID3D11Device* Device, 
+	const std::wstring& SourcePath,
+	ID3DBlob** PixelShaderSource,
+	ID3D11PixelShader** PixelShader
+)
 {
-	SAFE_RELEASE(PixelShaderSource_);
-	SAFE_RELEASE(PixelShader_);
-
 	HRESULT HR = S_OK;
 
-	HR = CompileShaderFromFile(SourcePath, "main", "ps_4_0_level_9_3", &PixelShaderSource_);
+	HR = CompileShaderFromFile(SourcePath, "main", "ps_4_0_level_9_3", PixelShaderSource);
 
 	if (SUCCEEDED(HR))
 	{
-		HR = Device->CreatePixelShader(PixelShaderSource_->GetBufferPointer(), PixelShaderSource_->GetBufferSize(), nullptr, &PixelShader_);
+		HR = Device->CreatePixelShader(
+			(*PixelShaderSource)->GetBufferPointer(),
+			(*PixelShaderSource)->GetBufferSize(),
+			nullptr, 
+			PixelShader
+		);
 	}
 
 	return HR;
 }
 
-HRESULT Shader::CreateInputLayout(ID3D11Device* Device, const std::vector<D3D11_INPUT_ELEMENT_DESC>& InputLayoutElements)
+HRESULT Shader::CreateInputLayout(
+	ID3D11Device* Device,
+	ID3DBlob* VertexShaderSource,
+	const std::vector<D3D11_INPUT_ELEMENT_DESC>& InputLayoutElements,
+	ID3D11InputLayout** InputLayout
+)
 {
-	SAFE_RELEASE(InputLayout_);
-
 	return Device->CreateInputLayout(
 		&InputLayoutElements[0],
 		static_cast<uint32_t>(InputLayoutElements.size()),
-		VertexShaderSource_->GetBufferPointer(),
-		VertexShaderSource_->GetBufferSize(),
-		&InputLayout_
+		VertexShaderSource->GetBufferPointer(),
+		VertexShaderSource->GetBufferSize(),
+		InputLayout
 	);
 }
 
