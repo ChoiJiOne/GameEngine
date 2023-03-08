@@ -2,10 +2,6 @@
 
 #include "Macro.h"
 
-#include <array>
-#include <vector>
-#include <chrono>
-#include <random>
 #include <unordered_map>
 
 
@@ -94,70 +90,4 @@ inline void ReadBufferFromFile(const std::wstring& Path, std::vector<uint8_t>& B
 
 	CHECK(ReadFile(FileHandle, &Buffer[0], FileSize, &BytesRead, nullptr), "failed read file");
 	CHECK(CloseHandle(FileHandle), "failed to close file");
-}
-
-
-/**
- * @brief 임의의 정수를 생성합니다.
- *
- * @param MinValue 생성할 난수 범위의 최솟값입니다.
- * @param MaxValue 생성할 난수 범위의 최댓값입니다.
- *
- * @return 생성된 임의의 정수를 반환합니다.
- */
-inline int32_t GenerateRandomInt(int32_t MinValue, int32_t MaxValue)
-{
-	std::random_device RandomDevice;
-	std::mt19937 Generator(RandomDevice());
-	std::uniform_int_distribution<int32_t> Distribution(std::min<int32_t>(MinValue, MaxValue), std::max<int32_t>(MinValue, MaxValue));
-
-	return Distribution(Generator);
-}
-
-
-/**
- * @brief 임의의 실수를 생성합니다.
- *
- * @param MinValue 생성할 난수 범위의 최솟값입니다.
- * @param MaxValue 생성할 난수 범위의 최댓값입니다.
- *
- * @return 생성된 임의의 실수를 반환합니다.
- */
-inline float GenerateRandomFloat(float MinValue, float MaxValue)
-{
-	std::random_device RandomDevice;
-	std::mt19937 Generator(RandomDevice());
-	std::uniform_real_distribution<float> Distribution(std::min<float>(MinValue, MaxValue), std::max<float>(MinValue, MaxValue));
-
-	return Distribution(Generator);
-}
-
-
-/**
- * @brief 정적 배열(array)에서 임의의 원소를 선택합니다.
- * 
- * @param Elements 임의의 원소를 추출할 배열입니다.
- * 
- * @return 배열 범위 내의 선택된 임의의 원소를 반환합니다.
- */
-template <typename T, int32_t N>
-inline const T& GetRandomElement(const std::array<T, N>& Elements)
-{
-	int32_t Index = GenerateRandomInt(0, static_cast<int32_t>(Elements.size()) - 1);
-	return Elements[Index];
-}
-
-
-/**
- * @brief 동적 배열(vector)에서 임의의 원소를 선택합니다.
- * 
- * @param Elements 임의의 원소를 추출할 배열입니다.
- * 
- * @return 배열 범위 내의 선택된 임의의 원소를 반환합니다.
- */
-template <typename T>
-inline const T& GetRandomElement(const std::vector<T>& Elements)
-{
-	int32_t Index = GenerateRandomInt(0, static_cast<int32_t>(Elements.size()) - 1);
-	return Elements[Index];
 }
