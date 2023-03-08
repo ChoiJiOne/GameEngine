@@ -245,6 +245,16 @@ enum class EVirtualKey
 
 
 /**
+ * @brief 마우스의 가상 버튼의 코드 값입니다.
+ */
+enum class EVirtualButton
+{
+	CODE_LEFT = 0x00,
+	CODE_RIGHT = 0x01,
+};
+
+
+/**
  * @brief 입력 처리 및 키보드, 마우스의 상태를 관리합니다.
  * 
  * @note 이 클래스는 싱글턴으로 헤더만 추가하면 바로 사용할 수 있습니다.
@@ -342,11 +352,45 @@ public:
 
 
 	/**
+	 * @brief 현재 마우스 위치를 얻습니다.
+	 *
+	 * @return Tick 호출 이후의 마우스 위치를 반환합니다.
+	 */
+	Vec2i GetPosition() const;
+
+
+	/**
+	 * @brief Tick 호출 이후와 이전의 차이값을 얻습니다.
+	 *
+	 * @return Tick 호출 이후와 이전의 차이값을 반환합니다.
+	 */
+	Vec2i GetDeltaPosition() const;
+
+
+	/**
 	 * @brief 현재 윈도우 창의 크기가 변경되는 중인지 확인합니다.
 	 * 
 	 * @return 윈도우 창의 크기가 변경되는 중이라면 true, 그렇지 않으면 false를 반환합니다.
 	 */
 	bool IsResizing() const { return bIsResizing_; }
+
+
+	/**
+	 * @brief 마우스가 움직이는지 확인합니다.
+	 *
+	 * @return 마우스가 움직인다면 true, 그렇지 않다면 false를 반환합니다.
+	 */
+	bool IsMove() const { return bIsMove_; }
+
+
+	/**
+	 * @brief 마우스 버튼의 입력 상태를 얻습니다.
+	 *
+	 * @param VirtualButton 입력 상태를 얻을 마우스 버튼입니다.
+	 *
+	 * @return 마우스 버튼이 눌려있다면 true, 그렇지 않으면 false를 반환합니다.
+	 */
+	bool IsPressButton(const EVirtualButton& VirtualButton);
 
 
 private:
@@ -375,8 +419,7 @@ private:
 	 */
 	void HandleWindowEvent(const EWindowEvent& WindowEvent);
 
-
-private:
+	
 	/**
 	 * @brief 특정 키가 눌렸는지 검사합니다.
 	 *
@@ -386,6 +429,27 @@ private:
 	 * @return 키가 눌렸다면 true, 그렇지 않다면 false를 반환합니다.
 	 */
 	bool IsPressKey(const std::vector<uint8_t>& KeyboardState, const EVirtualKey& VirtualKey) const;
+
+
+	/**
+	 * @brief 현재 마우스의 위치를 얻습니다.
+	 *
+	 * @note 기준은 현재 윈도우 창입니다.
+	 *
+	 * @return 모니터를 기준으로 현재 마우스의 (X, Y) 위치를 반환합니다.
+	 */
+	Vec2i GetCurrentPosition();
+
+
+	/**
+	 * @brief 마우스 버튼의 입력 상태를 설정합니다.
+	 *
+	 * @note InputManager 외에는 반드시 호출하면 안돼는 메서드입니다.
+	 *
+	 * @param VirtualButton 입력 상태를 설정할 마우스 버튼입니다.
+	 * @param bIsPressed 마우스의 입력 상태입니다.
+	 */
+	void SetButtonPressState(const EVirtualButton& VirtualButton, bool bIsPressed);
 
 
 private:
@@ -408,6 +472,12 @@ private:
 
 
 	/**
+	 * @brief 마우스가 움직이는지 확인합니다.
+	 */
+	bool bIsMove_ = false;
+
+
+	/**
 	 * @brief 업데이트 이전(Tick 호출 이전)의 키보드 상태입니다.
 	 */
 	std::vector<uint8_t> LastKeyboardState_;
@@ -417,6 +487,24 @@ private:
 	 * @brief 업데이트 후(Tick 호출 후)의 키보드 상태입니다.
 	 */
 	std::vector<uint8_t> CurrKeyboardState_;
+
+
+	/**
+	 * @brief 마우스가 눌렸는지 확인합니다.
+	 */
+	std::unordered_map<EVirtualButton, bool> ButtonPressState_;
+
+
+	/**
+	 * @brief 업데이트 이전(Tick 호출 이전)의 윈도우 기준 마우스 위치입니다.
+	 */
+	Vec2i LastWindowMousePosition_;
+
+
+	/**
+	 * @brief 업데이트 이전(Tick 호출 후)의 윈도우 기준 마우스 위치입니다.
+	 */
+	Vec2i CurrWindowMousePosition_;
 
 
 	/**
