@@ -255,6 +255,13 @@ class InputManager
 {
 public:
 	/**
+	 * @brief 키보드 키 값의 수입니다.
+	 */
+	static const int32_t VIRTUAL_KEYS = 256;
+
+
+public:
+	/**
 	 * @brief 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
 	 */
 	DISALLOW_COPY_AND_ASSIGN(InputManager);
