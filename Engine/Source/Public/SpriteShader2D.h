@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Matrix.hpp"
+#include "Math.hpp"
 #include "Shader.h"
-#include "Vertex.h"
 
 class Texture2D;
 
@@ -94,7 +93,7 @@ private:
 	/**
 	 * @brief 텍스처의 정점 목록입니다.
 	 */
-	std::vector<VertexPosUV> QuadTextureVertex_;
+	std::vector<Vertex::PositionUV> QuadTextureVertex_;
 
 
 	/**

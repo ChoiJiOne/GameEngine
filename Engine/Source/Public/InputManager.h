@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Macro.h"
-#include "Vector.hpp"
+#include "Math.hpp"
 
 #include <cstdint>
 #include <vector>

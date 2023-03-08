@@ -17,10 +17,10 @@ SpriteShader2D::SpriteShader2D(ID3D11Device* Device, const std::wstring& VertexS
 	EveryFrameBufferResource_.World.Identify();
 	EveryFrameBufferResource_.Projection.Identify();
 
-	QuadTextureVertex_ = std::vector<VertexPosUV>(4);
+	QuadTextureVertex_ = std::vector<Vertex::PositionUV>(4);
 	QuadTextureIndex_ = std::vector<uint32_t>{ 0, 1, 2, 0, 2, 3 };
 
-	CHECK_HR(CreateDynamicVertexBuffer<VertexPosUV>(Device, QuadTextureVertex_, &QuadTextureVertexBuffer_), "failed to create vertex buffer");
+	CHECK_HR(CreateDynamicVertexBuffer<Vertex::PositionUV>(Device, QuadTextureVertex_, &QuadTextureVertexBuffer_), "failed to create vertex buffer");
 	CHECK_HR(CreateIndexBuffer(Device, QuadTextureIndex_, &QuadTextureIndexBuffer_), "failed to create index buffer");
 }
 
@@ -50,18 +50,18 @@ void SpriteShader2D::RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Te
 
 	if (SUCCEEDED(Context->Map(QuadTextureVertexBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &VertexBufferMappedResource)))
 	{
-		VertexPosUV* Buffer = reinterpret_cast<VertexPosUV*>(VertexBufferMappedResource.pData);
+		Vertex::PositionUV* Buffer = reinterpret_cast<Vertex::PositionUV*>(VertexBufferMappedResource.pData);
 
 		std::memcpy(
 			Buffer,
 			reinterpret_cast<const void*>(&QuadTextureVertex_[0]),
-			QuadTextureVertex_.size() * sizeof(VertexPosUV)
+			QuadTextureVertex_.size() * sizeof(Vertex::PositionUV)
 		);
 
 		Context->Unmap(QuadTextureVertexBuffer_, 0);
 	}
 
-	uint32_t Stride = sizeof(VertexPosUV);
+	uint32_t Stride = sizeof(Vertex::PositionUV);
 	uint32_t Offset = 0;
 
 	Context->IASetVertexBuffers(0, 1, &QuadTextureVertexBuffer_, &Stride, &Offset);

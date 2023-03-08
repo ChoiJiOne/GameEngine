@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Matrix.hpp"
+#include "Math.hpp"
 #include "Shader.h"
-#include "Vertex.h"
 
 #include <unordered_map>
 #include <vector>
@@ -206,7 +205,7 @@ private:
 	/**
 	 * @brief 기본 도형의 정점 목록입니다.
 	 */
-	std::unordered_map<std::string, std::vector<VertexPosColor>> PrimitiveVertex_;
+	std::unordered_map<std::string, std::vector<Vertex::PositionColor>> PrimitiveVertex_;
 
 
 	/**

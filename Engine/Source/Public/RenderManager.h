@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Macro.h"
-#include "Color.h"
+#include "Math.hpp"
 #include "Shader.h"
 
 #include <memory>

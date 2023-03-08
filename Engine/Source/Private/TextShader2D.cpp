@@ -17,10 +17,10 @@ TextShader2D::TextShader2D(ID3D11Device* Device, const std::wstring& VertexShade
 
 	EveryFrameBufferResource_.Projection.Identify();
 
-	CharacterVertex_ = std::vector<VertexPosUV>(4);
+	CharacterVertex_ = std::vector<Vertex::PositionUV>(4);
 	CharacterIndex_ = std::vector<uint32_t>{ 0, 1, 2, 0, 2, 3 };
 
-	CHECK_HR(CreateDynamicVertexBuffer<VertexPosUV>(Device, CharacterVertex_, &CharacterVertexBuffer_), "failed to create vertex buffer");
+	CHECK_HR(CreateDynamicVertexBuffer<Vertex::PositionUV>(Device, CharacterVertex_, &CharacterVertexBuffer_), "failed to create vertex buffer");
 	CHECK_HR(CreateIndexBuffer(Device, CharacterIndex_, &CharacterIndexBuffer_), "failed to create index buffer");
 }
 
@@ -65,18 +65,18 @@ void TextShader2D::RenderText2D(ID3D11DeviceContext* Context, Font& FontResource
 
 		if (SUCCEEDED(Context->Map(CharacterVertexBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &VertexBufferMappedResource)))
 		{
-			VertexPosUV* Buffer = reinterpret_cast<VertexPosUV*>(VertexBufferMappedResource.pData);
+			Vertex::PositionUV* Buffer = reinterpret_cast<Vertex::PositionUV*>(VertexBufferMappedResource.pData);
 
 			std::memcpy(
 				Buffer,
 				reinterpret_cast<const void*>(&CharacterVertex_[0]),
-				CharacterVertex_.size() * sizeof(VertexPosUV)
+				CharacterVertex_.size() * sizeof(Vertex::PositionUV)
 			);
 
 			Context->Unmap(CharacterVertexBuffer_, 0);
 		}
 
-		uint32_t Stride = sizeof(VertexPosUV);
+		uint32_t Stride = sizeof(Vertex::PositionUV);
 		uint32_t Offset = 0;
 
 		Context->IASetVertexBuffers(0, 1, &CharacterVertexBuffer_, &Stride, &Offset);

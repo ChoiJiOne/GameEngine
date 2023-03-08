@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Matrix.hpp"
+#include "Math.hpp"
 #include "Shader.h"
-#include "Vertex.h"
 
 class Font;
 
@@ -106,7 +105,7 @@ private:
 	/**
 	 * @brief 텍스처의 정점 목록입니다.
 	 */
-	std::vector<VertexPosUV> CharacterVertex_;
+	std::vector<Vertex::PositionUV> CharacterVertex_;
 
 
 	/**

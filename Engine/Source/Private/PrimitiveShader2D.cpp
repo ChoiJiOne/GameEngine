@@ -14,7 +14,7 @@ PrimitiveShader2D::PrimitiveShader2D(ID3D11Device* Device, const std::wstring& V
 
 	EveryFrameBufferResource_.Projection.Identify();
 
-	std::vector<VertexPosColor> Vertices;
+	std::vector<Vertex::PositionColor> Vertices;
 	std::vector<uint32_t> Indices;
 
 	Vertices.resize(1);
@@ -208,18 +208,18 @@ void PrimitiveShader2D::RenderPrimitive(ID3D11DeviceContext* Context, const std:
 
 	if (SUCCEEDED(Context->Map(PrimitiveVertexBuffer_[PrimitiveSignature], 0, D3D11_MAP_WRITE_DISCARD, 0, &VertexBufferMappedResource)))
 	{
-		VertexPosColor* Buffer = reinterpret_cast<VertexPosColor*>(VertexBufferMappedResource.pData);
+		Vertex::PositionColor* Buffer = reinterpret_cast<Vertex::PositionColor*>(VertexBufferMappedResource.pData);
 
 		std::memcpy(
 			Buffer,
 			reinterpret_cast<const void*>(&PrimitiveVertex_[PrimitiveSignature][0]),
-			PrimitiveVertex_[PrimitiveSignature].size() * sizeof(VertexPosColor)
+			PrimitiveVertex_[PrimitiveSignature].size() * sizeof(Vertex::PositionColor)
 		);
 
 		Context->Unmap(PrimitiveVertexBuffer_[PrimitiveSignature], 0);
 	}
 
-	uint32_t Stride = sizeof(VertexPosColor);
+	uint32_t Stride = sizeof(Vertex::PositionColor);
 	uint32_t Offset = 0;
 
 	Context->IASetVertexBuffers(0, 1, &PrimitiveVertexBuffer_[PrimitiveSignature], &Stride, &Offset);
