@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Vector.hpp"
 #include "Matrix.hpp"
-#include "Shader.h"
+#include "Shader2D.h"
+#include "Vertex.h"
 
 class Font;
 
@@ -10,19 +10,9 @@ class Font;
 /**
  * @brief 2D 텍스트를 렌더링하는 셰이더입니다.
  */
-class Text2DRenderShader : public Shader
+class TextShader2D : public Shader2D
 {
 public:
-	/**
-	 * @brief 2D 문자의 정점입니다.
-	 */
-	struct CharacterVertex
-	{
-		Vec3f Position;
-		Vec2f UV;
-	};
-
-
 	/**
 	 * @brief 매 프레임 변경되는 셰이더 내의 상수 버퍼입니다.
 	 */
@@ -53,19 +43,19 @@ public:
 	 * 셰이더 컴파일에 실패하면 C++ 표준 예외를 던집니다.
 	 * 셰이더 리소스 생성에 실패하면 C++ 표준 예외를 던집니다.
 	 */
-	Text2DRenderShader(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath);
+	TextShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath);
 
 
 	/**
 	 * @brief 2D 텍스트를 렌더링하는 셰이더의 가상 소멸자입니다.
 	 */
-	virtual ~Text2DRenderShader();
+	virtual ~TextShader2D();
 
 
 	/**
 	 * @brief 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
 	 */
-	DISALLOW_COPY_AND_ASSIGN(Text2DRenderShader);
+	DISALLOW_COPY_AND_ASSIGN(TextShader2D);
 
 
 	/**
@@ -116,7 +106,7 @@ private:
 	/**
 	 * @brief 텍스처의 정점 목록입니다.
 	 */
-	std::vector<CharacterVertex> CharacterVertex_;
+	std::vector<VertexPosUV> CharacterVertex_;
 
 
 	/**

@@ -1,30 +1,30 @@
-#include "Text2DRenderShader.h"
+#include "TextShader2D.h"
 #include "Font.h"
 
-Text2DRenderShader::Text2DRenderShader(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
+TextShader2D::TextShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutElements = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	CHECK_HR(CreateVertexShaderFromFile(Device, VertexShaderSourcePath), "failed to create vertex shader");
-	CHECK_HR(CreatePixelShaderFromFile(Device, PixelShaderSourcePath), "failed to create pixel shader");
-	CHECK_HR(CreateInputLayout(Device, InputLayoutElements), "failed to create input layout");
+	CHECK_HR(CreateVertexShaderFromFile(Device, VertexShaderSourcePath, &VertexShaderSource_, &VertexShader_), "failed to create vertex shader");
+	CHECK_HR(CreatePixelShaderFromFile(Device, PixelShaderSourcePath, &PixelShaderSource_, &PixelShader_), "failed to create pixel shader");
+	CHECK_HR(CreateInputLayout(Device, VertexShaderSource_, InputLayoutElements, &InputLayout_), "failed to create input layout");
 	CHECK_HR(CreateDynamicConstantBuffer<EveryFramConstantBuffer>(Device, &EveryFrameBuffer_), "failed to every frame constant buffer");
 	CHECK_HR(CreateDynamicConstantBuffer<TextColorConstantBuffer>(Device, &TextColorBuffer_), "failed to text color constant buffer");
 	CHECK_HR(CreateLinearTextureSampler(Device, &LinearSampler_), "failed to create texture sampler");
 
 	EveryFrameBufferResource_.Projection.Identify();
 
-	CharacterVertex_ = std::vector<CharacterVertex>(4);
+	CharacterVertex_ = std::vector<VertexPosUV>(4);
 	CharacterIndex_ = std::vector<uint32_t>{ 0, 1, 2, 0, 2, 3 };
 
-	CHECK_HR(CreateDynamicVertexBuffer<CharacterVertex>(Device, CharacterVertex_, &CharacterVertexBuffer_), "failed to create vertex buffer");
+	CHECK_HR(CreateDynamicVertexBuffer<VertexPosUV>(Device, CharacterVertex_, &CharacterVertexBuffer_), "failed to create vertex buffer");
 	CHECK_HR(CreateIndexBuffer(Device, CharacterIndex_, &CharacterIndexBuffer_), "failed to create index buffer");
 }
 
-Text2DRenderShader::~Text2DRenderShader()
+TextShader2D::~TextShader2D()
 {
 	SAFE_RELEASE(LinearSampler_);
 	SAFE_RELEASE(CharacterIndexBuffer_);
@@ -33,7 +33,7 @@ Text2DRenderShader::~Text2DRenderShader()
 	SAFE_RELEASE(EveryFrameBuffer_);
 }
 
-void Text2DRenderShader::RenderText2D(ID3D11DeviceContext* Context, Font& FontResource, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color)
+void TextShader2D::RenderText2D(ID3D11DeviceContext* Context, Font& FontResource, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color)
 {
 	float TextWidth = 0.0f, TextHeight = 0.0f;
 	FontResource.MeasureText<float>(Text, TextWidth, TextHeight);
@@ -65,18 +65,18 @@ void Text2DRenderShader::RenderText2D(ID3D11DeviceContext* Context, Font& FontRe
 
 		if (SUCCEEDED(Context->Map(CharacterVertexBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &VertexBufferMappedResource)))
 		{
-			CharacterVertex* Buffer = reinterpret_cast<CharacterVertex*>(VertexBufferMappedResource.pData);
+			VertexPosUV* Buffer = reinterpret_cast<VertexPosUV*>(VertexBufferMappedResource.pData);
 
 			std::memcpy(
 				Buffer,
 				reinterpret_cast<const void*>(&CharacterVertex_[0]),
-				CharacterVertex_.size() * sizeof(CharacterVertex)
+				CharacterVertex_.size() * sizeof(VertexPosUV)
 			);
 
 			Context->Unmap(CharacterVertexBuffer_, 0);
 		}
 
-		uint32_t Stride = sizeof(CharacterVertex);
+		uint32_t Stride = sizeof(VertexPosUV);
 		uint32_t Offset = 0;
 
 		Context->IASetVertexBuffers(0, 1, &CharacterVertexBuffer_, &Stride, &Offset);
