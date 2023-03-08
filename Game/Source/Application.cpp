@@ -55,7 +55,7 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	{
 		InputManager::Get().Tick();
 
-		RenderManager::Get().Clear(BLACK);
+		RenderManager::Get().Clear(Color::BLACK);
 		RenderManager::Get().Present();
 	}
 
