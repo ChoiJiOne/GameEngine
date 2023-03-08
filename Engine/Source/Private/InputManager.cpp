@@ -1,7 +1,5 @@
 #include "InputManager.h"
 #include "Window.h"
-#include "Mouse.h"
-#include "Keyboard.h"
 #include "Utils.hpp"
 
 void InputManager::Setup(Window* MainWindow)
