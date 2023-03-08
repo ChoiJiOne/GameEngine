@@ -53,17 +53,17 @@ public:
 
 
 	/**
-	 * @brief 게임 오브젝트에 컴포넌트를 추가합니다.
+	 * @brief 게임 오브젝트의 컴포넌트를 생성합니다.
 	 * 
 	 * @note 이름에 대응하는 컴포넌트가 존재한다면 아무런 동작도 수행하지 않습니다.
 	 *
-	 * @param Name 추가할 컴포넌트의 이름입니다.
+	 * @param Name 생성할 컴포넌트의 이름입니다.
 	 * @param Args 컴포넌트에 필요한 가변 인자입니다.
 	 * 
-	 * @return 추가한 컴포넌트의 포인터 값을 반환합니다.
+	 * @return 생성한 컴포넌트의 포인터 값을 반환합니다.
 	 */
 	template<typename T, typename... Types>
-	T* AddComponent(const std::string& Name, Types... Args)
+	T* CreateComponent(const std::string& Name, Types... Args)
 	{
 		if (IsValidComponent(Name)) return nullptr;
 
