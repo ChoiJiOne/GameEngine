@@ -32,20 +32,20 @@ void RenderManager::Setup(Window* MainWindow)
 
 	Shaders_["Primitive"] = std::make_unique<PrimitiveShader2D>(
 		Device_,
-		ShaderPath + L"PrimitiveVS2D.hlsl",
-		ShaderPath + L"PrimitivePS2D.hlsl"
+		ShaderPath + L"PrimitiveVertexShader2D.hlsl",
+		ShaderPath + L"PrimitivePixelShader2D.hlsl"
 	);
 
 	Shaders_["Texture"] = std::make_unique<SpriteShader2D>(
 		Device_,
-		ShaderPath + L"SpriteVS2D.hlsl",
-		ShaderPath + L"SpritePS2D.hlsl"
+		ShaderPath + L"SpriteVertexShader2D.hlsl",
+		ShaderPath + L"SpritePixelShader2D.hlsl"
 	);
 
 	Shaders_["Text"] = std::make_unique<TextShader2D>(
 		Device_,
-		ShaderPath + L"TextVS2D.hlsl",
-		ShaderPath + L"TextPS2D.hlsl"
+		ShaderPath + L"TextVertexShader2D.hlsl",
+		ShaderPath + L"TextPixelShader2D.hlsl"
 	);
 
 	float Width = 0.0f, Height = 0.0f;
