@@ -8,17 +8,14 @@ void InputManager::Setup(Window* MainWindow)
 {
 	WindowHandle_ = MainWindow->GetHandle();
 
-	Keyboard_ = std::make_unique<Keyboard>();
-	Mouse_ = std::make_unique<Mouse>(WindowHandle_);
+	LastKeyboardState_ = std::vector<uint8_t>(VIRTUAL_KEYS, 0);
+	CurrKeyboardState_ = std::vector<uint8_t>(VIRTUAL_KEYS, 0);
 
 	bIsSetup_ = true;
 }
 
 void InputManager::Cleanup()
 {
-	Mouse_.reset();
-	Keyboard_.reset();
-
 	bIsSetup_ = false;
 }
 
@@ -71,22 +68,18 @@ LRESULT InputManager::ProcessWindowMessage(HWND WindowHandle, uint32_t Message, 
 		break;
 
 	case WM_LBUTTONDOWN:
-		Mouse_->SetButtonPressState(EVirtualButton::CODE_LEFT, true);
 		WindowEvent = EWindowEvent::LBUTTONDOWN;
 		break;
 
 	case WM_LBUTTONUP:
-		Mouse_->SetButtonPressState(EVirtualButton::CODE_LEFT, false);
 		WindowEvent = EWindowEvent::LBUTTONUP;
 		break;
 
 	case WM_RBUTTONDOWN:
-		Mouse_->SetButtonPressState(EVirtualButton::CODE_RIGHT, true);
 		WindowEvent = EWindowEvent::RBUTTONDOWN;
 		break;
 
 	case WM_RBUTTONUP:
-		Mouse_->SetButtonPressState(EVirtualButton::CODE_RIGHT, false);
 		WindowEvent = EWindowEvent::RBUTTONUP;
 		break;
 
@@ -128,8 +121,38 @@ void InputManager::Tick()
 {
 	PollEventMessage();
 
-	Keyboard_->Tick();
-	Mouse_->Tick();
+	std::copy(CurrKeyboardState_.begin(), CurrKeyboardState_.end(), LastKeyboardState_.begin());
+	CHECK(GetKeyboardState(&CurrKeyboardState_[0]), "failed to get keyboard state");
+}
+
+EPressState InputManager::GetKeyPressState(const EVirtualKey& VirtualKey) const
+{
+	EPressState PressState = EPressState::NONE;
+
+	if (IsPressKey(LastKeyboardState_, VirtualKey))
+	{
+		if (IsPressKey(CurrKeyboardState_, VirtualKey))
+		{
+			PressState = EPressState::HELD;
+		}
+		else
+		{
+			PressState = EPressState::RELEASED;
+		}
+	}
+	else
+	{
+		if (IsPressKey(CurrKeyboardState_, VirtualKey))
+		{
+			PressState = EPressState::PRESSED;
+		}
+		else
+		{
+			PressState = EPressState::NONE;
+		}
+	}
+
+	return PressState;
 }
 
 void InputManager::PollEventMessage()
@@ -149,4 +172,9 @@ void InputManager::HandleWindowEvent(const EWindowEvent& WindowEvent)
 	{
 		WindowEvents_.at(WindowEvent)();
 	}
+}
+
+bool InputManager::IsPressKey(const std::vector<uint8_t>& KeyboardState, const EVirtualKey& VirtualKey) const
+{
+	return (KeyboardState[static_cast<int32_t>(VirtualKey)] & 0x80);
 }

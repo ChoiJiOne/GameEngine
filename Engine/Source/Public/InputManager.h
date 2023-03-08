@@ -336,6 +336,12 @@ public:
 
 
 	/**
+	 * @brief 키보드 키의 입력 상태를 얻습니다.
+	 */
+	EPressState GetKeyPressState(const EVirtualKey& VirtualKey) const;
+
+
+	/**
 	 * @brief 현재 윈도우 창의 크기가 변경되는 중인지 확인합니다.
 	 * 
 	 * @return 윈도우 창의 크기가 변경되는 중이라면 true, 그렇지 않으면 false를 반환합니다.
@@ -372,6 +378,18 @@ private:
 
 private:
 	/**
+	 * @brief 특정 키가 눌렸는지 검사합니다.
+	 *
+	 * @param KeyboardState 검사를 수행할 키보드 상태입니다.
+	 * @param VirtualKey 검사를 수행할 가상 키 값입니다.
+	 *
+	 * @return 키가 눌렸다면 true, 그렇지 않다면 false를 반환합니다.
+	 */
+	bool IsPressKey(const std::vector<uint8_t>& KeyboardState, const EVirtualKey& VirtualKey) const;
+
+
+private:
+	/**
 	 * @brief 초기화 된 적이 있는지 확인합니다.
 	 */
 	bool bIsSetup_ = false;
@@ -387,6 +405,18 @@ private:
 	 * @brief 윈도우 창의 크기가 변경 중인지 확인합니다.
 	 */
 	bool bIsResizing_ = false;
+
+
+	/**
+	 * @brief 업데이트 이전(Tick 호출 이전)의 키보드 상태입니다.
+	 */
+	std::vector<uint8_t> LastKeyboardState_;
+
+
+	/**
+	 * @brief 업데이트 후(Tick 호출 후)의 키보드 상태입니다.
+	 */
+	std::vector<uint8_t> CurrKeyboardState_;
 
 
 	/**
