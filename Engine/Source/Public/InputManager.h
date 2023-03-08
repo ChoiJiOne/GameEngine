@@ -2,8 +2,6 @@
 
 #include "Macro.h"
 #include "Vector.hpp"
-#include "Keyboard.h"
-#include "Mouse.h"
 
 #include <cstdint>
 #include <vector>
@@ -338,35 +336,11 @@ public:
 
 
 	/**
-	 * @brief InputManager가 관리하는 키보드를 얻습니다.
+	 * @brief 현재 윈도우 창의 크기가 변경되는 중인지 확인합니다.
 	 * 
-	 * @return InputManager가 관리하는 키보드의 상수 참조자를 반환합니다.
+	 * @return 윈도우 창의 크기가 변경되는 중이라면 true, 그렇지 않으면 false를 반환합니다.
 	 */
-	const Keyboard& GetKeyboard() const { return *Keyboard_.get(); }
-
-
-	/**
-	 * @brief InputManager가 관리하는 키보드를 얻습니다.
-	 *
-	 * @return InputManager가 관리하는 키보드의 참조자를 반환합니다.
-	 */
-	Keyboard& GetKeyboard() { return *Keyboard_.get(); }
-
-
-	/**
-	 * @brief InputManager가 관리하는 마우스를 얻습니다.
-	 * 
-	 * return InputManager가 관리하는 키보드의 상수 참조자를 반환합니다.
-	 */
-	const Mouse& GetMouse() const { return *Mouse_.get(); }
-
-
-	/**
-	 * @brief InputManager가 관리하는 마우스를 얻습니다.
-	 *
-	 * return InputManager가 관리하는 키보드의 참조자를 반환합니다.
-	 */
-	Mouse& GetMouse() { return *Mouse_.get(); }
+	bool IsResizing() const { return bIsResizing_; }
 
 
 private:
@@ -413,18 +387,6 @@ private:
 	 * @brief 윈도우 창의 크기가 변경 중인지 확인합니다.
 	 */
 	bool bIsResizing_ = false;
-
-
-	/**
-	 * @brief InputManager가 관리하는 키보드 상태입니다.
-	 */
-	std::unique_ptr<Keyboard> Keyboard_ = nullptr;
-
-
-	/**
-	 * @brief InputManager가 관리하는 마우스 상태입니다.
-	 */
-	std::unique_ptr<Mouse> Mouse_ = nullptr;
 
 
 	/**
