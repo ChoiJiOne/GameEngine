@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Matrix.hpp"
-#include "Shader2D.h"
+#include "Shader.h"
 #include "Vertex.h"
 
 #include <unordered_map>
@@ -11,7 +11,7 @@
 /**
  * @brief 2D 기본 도형을 렌더링하는 셰이더입니다.
  */
-class PrimitiveShader2D : public Shader2D
+class PrimitiveShader2D : public Shader
 {
 public:
 	/**

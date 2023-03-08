@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Matrix.hpp"
-#include "Shader2D.h"
+#include "Shader.h"
 #include "Vertex.h"
 
 class Font;
@@ -10,7 +10,7 @@ class Font;
 /**
  * @brief 2D 텍스트를 렌더링하는 셰이더입니다.
  */
-class TextShader2D : public Shader2D
+class TextShader2D : public Shader
 {
 public:
 	/**

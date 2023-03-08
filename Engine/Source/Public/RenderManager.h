@@ -2,7 +2,7 @@
 
 #include "Macro.h"
 #include "Color.h"
-#include "Shader2D.h"
+#include "Shader.h"
 
 #include <memory>
 #include <unordered_map>
@@ -447,7 +447,7 @@ private:
 
 
 	/**
-	 * @brief ·»´õ¸µ ½Ã »ç¿ëÇÒ 2D ¼ÎÀÌ´õÀÔ´Ï´Ù.
+	 * @brief ·»´õ¸µ ½Ã »ç¿ëÇÒ ¼ÎÀÌ´õÀÔ´Ï´Ù.
 	 */
-	std::unordered_map<std::string, std::unique_ptr<Shader2D>> Shader2Ds_;
+	std::unordered_map<std::string, std::unique_ptr<Shader>> Shaders_;
 };

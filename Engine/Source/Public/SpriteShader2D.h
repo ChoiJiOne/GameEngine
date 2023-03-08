@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Matrix.hpp"
-#include "Shader2D.h"
+#include "Shader.h"
 #include "Vertex.h"
 
 class Texture2D;
@@ -10,7 +10,7 @@ class Texture2D;
 /**
  * @brief 2D 텍스처를 렌더링하는 셰이더입니다.
  */
-class SpriteShader2D : public Shader2D
+class SpriteShader2D : public Shader
 {
 public:
 	/**
