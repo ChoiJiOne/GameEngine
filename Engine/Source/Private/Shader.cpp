@@ -2,6 +2,15 @@
 
 #include <d3dcompiler.h>
 
+Shader::~Shader()
+{
+	SAFE_RELEASE(InputLayout_);
+	SAFE_RELEASE(VertexShaderSource_);
+	SAFE_RELEASE(VertexShader_);
+	SAFE_RELEASE(PixelShaderSource_);
+	SAFE_RELEASE(PixelShader_);
+}
+
 HRESULT Shader::CompileShaderFromFile(const std::wstring& SourcePath, const std::string& EntryPoint, const std::string& ShaderModel, ID3DBlob** Blob)
 {
 	HRESULT HR = S_OK;

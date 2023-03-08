@@ -21,7 +21,7 @@ public:
 	/**
 	 * @brief 셰이더 클래스의 가상 소멸자입니다.
 	 */
-	virtual ~Shader() {}
+	virtual ~Shader();
 
 
 	/**
@@ -270,4 +270,37 @@ protected:
 	 * @return 선형 텍스처 샘플러 생성 결과를 반환합니다. 생성에 성공하면 S_OK, 그렇지 않으면 그 이외의 값을 반환합니다.
 	 */
 	HRESULT CreateLinearTextureSampler(ID3D11Device* Device, ID3D11SamplerState** LinearTextureSampler);
+
+
+protected:
+	/**
+	 * @brief 정점 셰이더 소스 리소스입니다.
+	 */
+	ID3DBlob* VertexShaderSource_ = nullptr;
+
+
+	/**
+	 * @brief 정점 셰이더 리소스입니다.
+	 */
+	ID3D11VertexShader* VertexShader_ = nullptr;
+
+
+	/**
+	 * @brief 픽셀 셰이더 소스 리소스입니다.
+	 */
+	ID3DBlob* PixelShaderSource_ = nullptr;
+
+
+	/**
+	 * @brief 픽셀 셰이더 리소스입니다.
+	 */
+	ID3D11PixelShader* PixelShader_ = nullptr;
+
+
+	/**
+	 * @brief 렌더링 파이프라인의 정점 데이터를 정의합니다.
+	 *
+	 * @note https://learn.microsoft.com/en-us/windows/win32/api/d3d11/nn-d3d11-id3d11inputlayout
+	 */
+	ID3D11InputLayout* InputLayout_ = nullptr;
 };
