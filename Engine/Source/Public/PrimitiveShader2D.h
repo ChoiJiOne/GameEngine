@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Vector.hpp"
 #include "Matrix.hpp"
-#include "Shader.h"
+#include "Shader2D.h"
+#include "Vertex.h"
 
 #include <unordered_map>
 #include <vector>
@@ -11,39 +11,8 @@
 /**
  * @brief 2D 기본 도형을 렌더링하는 셰이더입니다.
  */
-class Primitive2DRenderShader : public Shader
+class PrimitiveShader2D : public Shader2D
 {
-public:
-	/**
-	 * @brief 내부 렌더링 타입입니다.
-	 */
-	enum class ERenderType
-	{
-		POINT    = 0,
-		LINE     = 1,
-		TRIANGLE = 2
-	};
-
-
-	/**
-	 * @brief 기본 도형의 정점입니다.
-	 */
-	struct PrimitiveVertex
-	{
-		Vec3f Position;
-		Vec4f Color;
-	};
-
-
-	/**
-	 * @brief 매 프레임 변경되는 셰이더 내의 상수 버퍼입니다.
-	 */
-	struct EveryFramConstantBuffer
-	{
-		Matrix4x4F Projection;
-	};
-
-
 public:
 	/**
 	 * @brief 셰이더를 컴파일하고 정점 셰이더와 픽셀 셰이더를 생성합니다.
@@ -56,19 +25,19 @@ public:
 	 * 셰이더 컴파일에 실패하면 C++ 표준 예외를 던집니다.
 	 * 셰이더 리소스 생성에 실패하면 C++ 표준 예외를 던집니다.
 	 */
-	Primitive2DRenderShader(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath);
+	PrimitiveShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath);
 	
 
 	/**
 	 * @brief 기본 도형을 렌더링하는 셰이더의 가상 소멸자입니다.
 	 */
-	virtual ~Primitive2DRenderShader();
+	virtual ~PrimitiveShader2D();
 
 
 	/**
 	 * @brief 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
 	 */
-	DISALLOW_COPY_AND_ASSIGN(Primitive2DRenderShader);
+	DISALLOW_COPY_AND_ASSIGN(PrimitiveShader2D);
 
 
 	/**
@@ -192,6 +161,26 @@ public:
 
 private:
 	/**
+	 * @brief 내부 렌더링 타입입니다.
+	 */
+	enum class ERenderType
+	{
+		POINT    = 0,
+		LINE     = 1,
+		TRIANGLE = 2
+	};
+
+
+	/**
+	 * @brief 매 프레임 변경되는 셰이더 내의 상수 버퍼입니다.
+	 */
+	struct EveryFramConstantBuffer
+	{
+		Matrix4x4F Projection;
+	};
+
+
+	/**
 	 * @brief 기본 도형을 화면에 그립니다.
 	 * 
 	 * @param Context 렌더링을 수행할 컨텍스트입니다.
@@ -217,7 +206,7 @@ private:
 	/**
 	 * @brief 기본 도형의 정점 목록입니다.
 	 */
-	std::unordered_map<std::string, std::vector<PrimitiveVertex>> PrimitiveVertex_;
+	std::unordered_map<std::string, std::vector<VertexPosColor>> PrimitiveVertex_;
 
 
 	/**
