@@ -263,30 +263,18 @@ void RenderManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const Lin
 	);
 }
 
-void RenderManager::DrawFillQuad2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy0, const LinearColor& ColorBy0, const Vec2f& PositionBy1, const LinearColor& ColorBy1, const Vec2f& PositionTo, const LinearColor& ColorTo)
+void RenderManager::DrawFillQuad2D(const Vec2f& Center, const LinearColor& Color, float Width, float Height, float Rotate)
 {
 	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderFillQuad(
-		Context_,
-		Vec3f(PositionFrom.x, PositionFrom.y, 0.0f), ColorFrom,
-		Vec3f( PositionBy0.x,  PositionBy0.y, 0.0f), ColorBy0,
-		Vec3f( PositionBy1.x,  PositionBy1.y, 0.0f), ColorBy1,
-		Vec3f(  PositionTo.x,   PositionTo.y, 0.0f), ColorTo
-	);
+	PrimitiveShader->RenderFillQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
 }
 
-void RenderManager::DrawWireframeQuad2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy0, const LinearColor& ColorBy0, const Vec2f& PositionBy1, const LinearColor& ColorBy1, const Vec2f& PositionTo, const LinearColor& ColorTo)
+void RenderManager::DrawWireframeQuad2D(const Vec2f& Center, const LinearColor& Color, float Width, float Height, float Rotate)
 {
 	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderWireframeQuad(
-		Context_,
-		Vec3f(PositionFrom.x, PositionFrom.y, 0.0f), ColorFrom,
-		Vec3f( PositionBy0.x,  PositionBy0.y, 0.0f), ColorBy0,
-		Vec3f( PositionBy1.x,  PositionBy1.y, 0.0f), ColorBy1,
-		Vec3f(  PositionTo.x,   PositionTo.y, 0.0f), ColorTo
-	);
+	PrimitiveShader->RenderWireframeQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
 }
 
 void RenderManager::DrawTexture2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate)
