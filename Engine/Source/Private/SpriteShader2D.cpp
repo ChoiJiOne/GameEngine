@@ -14,7 +14,6 @@ SpriteShader2D::SpriteShader2D(ID3D11Device* Device, const std::wstring& VertexS
 	CHECK_HR(CreateDynamicConstantBuffer<EveryFramConstantBuffer>(Device, &EveryFrameBuffer_), "failed to every frame constant buffer");
 	CHECK_HR(CreateLinearTextureSampler(Device, &LinearSampler_), "failed to create texture sampler");
 
-	EveryFrameBufferResource_.World.Identify();
 	EveryFrameBufferResource_.Projection.Identify();
 
 	QuadTextureVertex_ = std::vector<Vertex::PositionUV>(4);
@@ -32,19 +31,29 @@ SpriteShader2D::~SpriteShader2D()
 	SAFE_RELEASE(EveryFrameBuffer_);
 }
 
-void SpriteShader2D::RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height)
+void SpriteShader2D::RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height, float Rotate)
 {
-	QuadTextureVertex_[0].Position = Vec3f(Center.x - Width / 2.0f, Center.y - Height / 2.0f, Center.z);
-	QuadTextureVertex_[0].UV = Vec2f(0.0f, 1.0f);
+	QuadTextureVertex_[0].Position = Vec3f(-Width / 2.0f, -Height / 2.0f, Center.z);
+	QuadTextureVertex_[0].UV       = Vec2f(0.0f, 1.0f);
 
-	QuadTextureVertex_[1].Position = Vec3f(Center.x - Width / 2.0f, Center.y + Height / 2.0f, Center.z);
-	QuadTextureVertex_[1].UV = Vec2f(0.0f, 0.0f);
+	QuadTextureVertex_[1].Position = Vec3f(-Width / 2.0f, +Height / 2.0f, Center.z);
+	QuadTextureVertex_[1].UV       = Vec2f(0.0f, 0.0f);
 
-	QuadTextureVertex_[2].Position = Vec3f(Center.x + Width / 2.0f, Center.y + Height / 2.0f, Center.z);
-	QuadTextureVertex_[2].UV = Vec2f(1.0f, 0.0f);
+	QuadTextureVertex_[2].Position = Vec3f(+Width / 2.0f, +Height / 2.0f, Center.z);
+	QuadTextureVertex_[2].UV       = Vec2f(1.0f, 0.0f);
 	
-	QuadTextureVertex_[3].Position = Vec3f(Center.x + Width / 2.0f, Center.y - Height / 2.0f, Center.z);
-	QuadTextureVertex_[3].UV = Vec2f(1.0f, 1.0f);
+	QuadTextureVertex_[3].Position = Vec3f(+Width / 2.0f, -Height / 2.0f, Center.z);
+	QuadTextureVertex_[3].UV       = Vec2f(1.0f, 1.0f);
+
+	for (auto& QuadVertex : QuadTextureVertex_)
+	{
+		Vec3f Position = QuadVertex.Position;
+
+		QuadVertex.Position.x = cos(Rotate) * Position.x - sin(Rotate) * Position.y;
+		QuadVertex.Position.y = sin(Rotate) * Position.x + cos(Rotate) * Position.y;
+
+		QuadVertex.Position += Center;
+	}
 
 	D3D11_MAPPED_SUBRESOURCE VertexBufferMappedResource;
 
@@ -79,7 +88,6 @@ void SpriteShader2D::RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Te
 	{
 		EveryFramConstantBuffer* Buffer = reinterpret_cast<EveryFramConstantBuffer*>(ConstantBufferMappedResource.pData);
 
-		Buffer->World = EveryFrameBufferResource_.World;
 		Buffer->Projection = EveryFrameBufferResource_.Projection;
 
 		Context->Unmap(EveryFrameBuffer_, 0);

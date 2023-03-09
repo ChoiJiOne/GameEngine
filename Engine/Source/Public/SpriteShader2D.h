@@ -17,7 +17,6 @@ public:
 	 */
 	struct EveryFramConstantBuffer
 	{
-		Matrix4x4F World;
 		Matrix4x4F Projection;
 	};
 
@@ -50,14 +49,6 @@ public:
 
 
 	/**
-	 * @brief 셰이더에서 사용하는 월드 행렬을 설정합니다.
-	 *
-	 * @param World 설정할 월드 행렬입니다.
-	 */
-	void SetWorldMatrix(const Matrix4x4F& World) { EveryFrameBufferResource_.World = World; }
-
-
-	/**
 	 * @brief 셰이더에서 사용하는 투영 행렬을 설정합니다.
 	 *
 	 * @param Projection 설정할 투영 행렬입니다.
@@ -68,13 +59,16 @@ public:
 	/**
 	 * @brief 백 버퍼에 2D 텍스처를 그립니다.
 	 * 
+	 * @ntoe 회전각은 라디안 기준입니다.
+	 * 
 	 * @param Context 렌더링을 수행할 컨텍스트입니다.
 	 * @param Texture 렌더링 대상이 되는 2D 텍스처입니다.
 	 * @param Center 텍스처의 중심 좌표입니다.
 	 * @param Width 텍스처의 가로 크기입니다.
 	 * @param Height 텍스처의 세로 크기입니다.
+	 * @param Rotate 텍스처의 회전 각도입니다. 기본 값은 0.0입니다.
 	 */
-	void RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height);
+	void RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height, float Rotate = 0.0f);
 	
 
 private:
