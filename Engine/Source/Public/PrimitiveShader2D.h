@@ -140,6 +140,28 @@ public:
 	void RenderWireframeQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate = 0.0f);
 
 
+	/**
+	 * @brief 백 버퍼에 채움 원을 그립니다.
+	 * 
+	 * @param Context 렌더링을 수행할 컨텍스트입니다.
+	 * @param Center 원의 중심 좌표입니다.
+	 * @param Color 원의 색상입니다.
+	 * @param Radius 원의 반지름 길이입니다.
+	 */
+	void RenderFillCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius);
+
+
+	/**
+	 * @brief 백 버퍼에 와이어프레임 원을 그립니다.
+	 * 
+	 * @param Context 렌더링을 수행할 컨텍스트입니다.
+	 * @param Center 원의 중심 좌표입니다.
+	 * @param Color 원의 색상입니다.
+	 * @param Radius 원의 반지름 길이입니다.
+	 */
+	void RenderWireframeCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius);
+
+
 private:
 	/**
 	 * @brief 내부 렌더링 타입입니다.

@@ -78,6 +78,7 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 		RenderManager::Get().DrawFillQuad2D(Vec2f(0.0f, 0.0f), Color::RED, 200.0f, 200.0f, ToRadian(Timer.GetTotalSeconds() * 100.0f));
 		RenderManager::Get().DrawWireframeQuad2D(Vec2f(0.0f, 0.0f), Color::BLUE, 200.0f, 200.0f, ToRadian(-Timer.GetTotalSeconds() * 100.0f));
 		RenderManager::Get().DrawLine2D(Vec2f(-100.0f, -100.0f), Color::RED, Vec2f(100.0f, 100.0f), Color::GREEN);
+		RenderManager::Get().DrawFillCircle(Vec2f(0.0f, 0.0f), Color::GREEN, 200.0f);
 		//RenderManager::Get().DrawTexture2D(TextureID, Vec2f(0.0f, 100.0f), 100.0f, 100.0f);
 		RenderManager::Get().Present();
 	}

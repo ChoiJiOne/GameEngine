@@ -262,6 +262,26 @@ public:
 
 
 	/**
+	 * @brief 화면에 2D 채움 원을 그립니다.
+	 * 
+	 * @param Center 원의 중심 좌표입니다.
+	 * @param Color 원의 색상입니다.
+	 * @param Radius 원의 반지름 길이입니다.
+	 */
+	void DrawFillCircle(const Vec2f& Center, const LinearColor& Color, float Radius);
+
+
+	/**
+	 * @brief 화면에 2D 와이어프레임 원을 그립니다.
+	 * 
+	 * @param Center 원의 중심 좌표입니다.
+	 * @param Color 원의 색상입니다.
+	 * @param Radius 원의 반지름 길이입니다.
+	 */
+	void DrawWireframeCircle(const Vec2f& Center, const LinearColor& Color, float Radius);
+
+
+	/**
 	 * @brief 화면에 2D 텍스처를 그립니다.
 	 * 
 	 * @ntoe 회전각은 라디안 기준입니다.

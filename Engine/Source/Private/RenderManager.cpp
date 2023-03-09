@@ -277,6 +277,20 @@ void RenderManager::DrawWireframeQuad2D(const Vec2f& Center, const LinearColor& 
 	PrimitiveShader->RenderWireframeQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
 }
 
+void RenderManager::DrawFillCircle(const Vec2f& Center, const LinearColor& Color, float Radius)
+{
+	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+
+	PrimitiveShader->RenderFillCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
+}
+
+void RenderManager::DrawWireframeCircle(const Vec2f& Center, const LinearColor& Color, float Radius)
+{
+	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+
+	PrimitiveShader->RenderWireframeCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
+}
+
 void RenderManager::DrawTexture2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate)
 {
 	SpriteShader2D* Shader2D = reinterpret_cast<SpriteShader2D*>(Shaders_["Texture"].get());

@@ -41,6 +41,25 @@ PrimitiveShader2D::PrimitiveShader2D(ID3D11Device* Device, const std::wstring& V
 	Vertices.resize(4);
 	Indices = {0, 1, 1, 2, 2, 3, 3, 0};
 	BuildVertexAndIndexBuffer(Device, "WireframeQuad", Vertices, Indices);
+
+	Vertices.resize(41);
+	Indices = {};
+	for (std::size_t Index = 0; Index < Vertices.size() - 1; ++Index)
+	{
+		Indices.push_back(Vertices.size() - 1);
+		Indices.push_back((Index + 0) % (Vertices.size() - 1));
+		Indices.push_back((Index + 1) % (Vertices.size() - 1));
+	}
+	BuildVertexAndIndexBuffer(Device, "Circle", Vertices, Indices);
+
+	Vertices.resize(40);
+	Indices = {};
+	for (std::size_t Index = 0; Index < Vertices.size(); ++Index)
+	{
+		Indices.push_back((Index + 0) % Vertices.size());
+		Indices.push_back((Index + 1) % Vertices.size());
+	}
+	BuildVertexAndIndexBuffer(Device, "WireframeCircle", Vertices, Indices);
 }
 
 PrimitiveShader2D::~PrimitiveShader2D()
@@ -171,6 +190,30 @@ void PrimitiveShader2D::RenderWireframeQuad(ID3D11DeviceContext* Context, const 
 	}
 
 	RenderPrimitive(Context, "WireframeQuad", ERenderType::LINE);
+}
+
+void PrimitiveShader2D::RenderFillCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
+{
+	for (std::size_t Index = 0; PrimitiveVertex_["Circle"].size() - 1; ++Index)
+	{
+
+	}
+
+	std::size_t VertexSize = PrimitiveVertex_["Circle"].size();
+	PrimitiveVertex_["Circle"][VertexSize - 1].Position = Center;
+	PrimitiveVertex_["Circle"][VertexSize - 1].Color = Color;
+
+	RenderPrimitive(Context, "Circle", ERenderType::TRIANGLE);
+}
+
+void PrimitiveShader2D::RenderWireframeCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
+{
+	for (std::size_t Index = 0; PrimitiveVertex_["WireframeCircle"].size(); ++Index)
+	{
+
+	}
+
+	RenderPrimitive(Context, "WireframeCircle", ERenderType::LINE);
 }
 
 void PrimitiveShader2D::BuildVertexAndIndexBuffer(ID3D11Device* Device, const std::string& Name, const std::vector<Vertex::PositionColor>& Vertices, const std::vector<uint32_t>& Indices)
