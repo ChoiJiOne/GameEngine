@@ -118,44 +118,26 @@ public:
 	 * @brief 백 버퍼에 2D 채움 사각형을 그립니다.
 	 * 
 	 * @param Context 렌더링을 수행할 컨텍스트입니다.
-	 * @param PositionFrom 삼각형 정점의 시작점입니다.
-	 * @param ColorFrom 삼각형 정점의 시작점 색상입니다.
-	 * @param PositionBy0 삼각형 정점의 중간점입니다.
-	 * @param ColorBy0 삼각형 정점의 중간점 색상입니다.	 
-	 * @param PositionBy1 삼각형 정점의 중간점입니다.
-	 * @param ColorBy1 삼각형 정점의 중간점 색상입니다.
-	 * @param PositionTo 삼각형 정점의 끝점입니다.
-	 * @param ColorTo 삼각형 정점의 끝점 색상입니다.
+	 * @param Center 사각형의 중심 좌표입니다.
+	 * @param Color 사각형의 색상입니다.
+	 * @param Width 사각형의 가로 크기입니다.
+	 * @param Height 사각형의 세로 크기입니다.
+	 * @param Rotate 사각형의 회전 각도입니다. 기본 값은 0.0입니다.
 	 */
-	void RenderFillQuad(
-		ID3D11DeviceContext* Context,
-		const Vec3f& PositionFrom, const Vec4f& ColorFrom,
-		const Vec3f& PositionBy0, const Vec4f& ColorBy0,
-		const Vec3f& PositionBy1, const Vec4f& ColorBy1,
-		const Vec3f& PositionTo, const Vec4f& ColorTo
-	);
+	void RenderFillQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate = 0.0f);
 
 
 	/**
 	 * @brief 백 버퍼에 2D 와이어 프레임 사각형을 그립니다.
 	 * 
 	 * @param Context 렌더링을 수행할 컨텍스트입니다.
-	 * @param PositionFrom 삼각형 정점의 시작점입니다.
-	 * @param ColorFrom 삼각형 정점의 시작점 색상입니다.
-	 * @param PositionBy0 삼각형 정점의 중간점입니다.
-	 * @param ColorBy0 삼각형 정점의 중간점 색상입니다.
-	 * @param PositionBy1 삼각형 정점의 중간점입니다.
-	 * @param ColorBy1 삼각형 정점의 중간점 색상입니다.
-	 * @param PositionTo 삼각형 정점의 끝점입니다.
-	 * @param ColorTo 삼각형 정점의 끝점 색상입니다.
+	 * @param Center 사각형의 중심 좌표입니다.
+	 * @param Color 사각형의 색상입니다.
+	 * @param Width 사각형의 가로 크기입니다.
+	 * @param Height 사각형의 세로 크기입니다.
+	 * @param Rotate 사각형의 회전 각도입니다. 기본 값은 0.0입니다.
 	 */
-	void RenderWireframeQuad(
-		ID3D11DeviceContext* Context,
-		const Vec3f& PositionFrom, const Vec4f& ColorFrom,
-		const Vec3f& PositionBy0, const Vec4f& ColorBy0,
-		const Vec3f& PositionBy1, const Vec4f& ColorBy1,
-		const Vec3f& PositionTo, const Vec4f& ColorTo
-	);
+	void RenderWireframeQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate = 0.0f);
 
 
 private:

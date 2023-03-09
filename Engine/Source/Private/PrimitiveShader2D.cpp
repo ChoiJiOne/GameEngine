@@ -119,48 +119,56 @@ void PrimitiveShader2D::RenderWireframeTriangle(
 	RenderPrimitive(Context, "WireframeTriangle", ERenderType::LINE);
 }
 
-void PrimitiveShader2D::RenderFillQuad(
-	ID3D11DeviceContext* Context, 
-	const Vec3f& PositionFrom, const Vec4f& ColorFrom, 
-	const Vec3f& PositionBy0, const Vec4f& ColorBy0, 
-	const Vec3f& PositionBy1, const Vec4f& ColorBy1, 
-	const Vec3f& PositionTo, const Vec4f& ColorTo
-)
+void PrimitiveShader2D::RenderFillQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate)
 {
-	PrimitiveVertex_["Quad"][0].Position = PositionFrom;
-	PrimitiveVertex_["Quad"][0].Color = ColorFrom;
+	PrimitiveVertex_["Quad"][0].Position = Vec3f(-Width / 2.0f, -Height / 2.0f, Center.z);
+	PrimitiveVertex_["Quad"][0].Color = Color;
 
-	PrimitiveVertex_["Quad"][1].Position = PositionBy0;
-	PrimitiveVertex_["Quad"][1].Color = ColorBy0;
+	PrimitiveVertex_["Quad"][1].Position = Vec3f(-Width / 2.0f, +Height / 2.0f, Center.z);
+	PrimitiveVertex_["Quad"][1].Color = Color;
 
-	PrimitiveVertex_["Quad"][2].Position = PositionBy1;
-	PrimitiveVertex_["Quad"][2].Color = ColorBy1;
+	PrimitiveVertex_["Quad"][2].Position = Vec3f(+Width / 2.0f, +Height / 2.0f, Center.z);
+	PrimitiveVertex_["Quad"][2].Color = Color;
 
-	PrimitiveVertex_["Quad"][3].Position = PositionTo;
-	PrimitiveVertex_["Quad"][3].Color = ColorTo;
+	PrimitiveVertex_["Quad"][3].Position = Vec3f(+Width / 2.0f, -Height / 2.0f, Center.z);
+	PrimitiveVertex_["Quad"][3].Color = Color;
+
+	for (auto& PrimitiveVertex : PrimitiveVertex_["Quad"])
+	{
+		Vec3f Position = PrimitiveVertex.Position;
+
+		PrimitiveVertex.Position.x = cos(Rotate) * Position.x - sin(Rotate) * Position.y;
+		PrimitiveVertex.Position.y = sin(Rotate) * Position.x + cos(Rotate) * Position.y;
+
+		PrimitiveVertex.Position += Center;
+	}
 
 	RenderPrimitive(Context, "Quad", ERenderType::TRIANGLE);
 }
 
-void PrimitiveShader2D::RenderWireframeQuad(
-	ID3D11DeviceContext* Context, 
-	const Vec3f& PositionFrom, const Vec4f& ColorFrom, 
-	const Vec3f& PositionBy0, const Vec4f& ColorBy0, 
-	const Vec3f& PositionBy1, const Vec4f& ColorBy1, 
-	const Vec3f& PositionTo, const Vec4f& ColorTo
-)
+void PrimitiveShader2D::RenderWireframeQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate)
 {
-	PrimitiveVertex_["WireframeQuad"][0].Position = PositionFrom;
-	PrimitiveVertex_["WireframeQuad"][0].Color = ColorFrom;
+	PrimitiveVertex_["WireframeQuad"][0].Position = Vec3f(-Width / 2.0f, -Height / 2.0f, Center.z);
+	PrimitiveVertex_["WireframeQuad"][0].Color = Color;
 
-	PrimitiveVertex_["WireframeQuad"][1].Position = PositionBy0;
-	PrimitiveVertex_["WireframeQuad"][1].Color = ColorBy0;
+	PrimitiveVertex_["WireframeQuad"][1].Position = Vec3f(-Width / 2.0f, +Height / 2.0f, Center.z);
+	PrimitiveVertex_["WireframeQuad"][1].Color = Color;
 
-	PrimitiveVertex_["WireframeQuad"][2].Position = PositionBy1;
-	PrimitiveVertex_["WireframeQuad"][2].Color = ColorBy1;
+	PrimitiveVertex_["WireframeQuad"][2].Position = Vec3f(+Width / 2.0f, +Height / 2.0f, Center.z);
+	PrimitiveVertex_["WireframeQuad"][2].Color = Color;
 
-	PrimitiveVertex_["WireframeQuad"][3].Position = PositionTo;
-	PrimitiveVertex_["WireframeQuad"][3].Color = ColorTo;
+	PrimitiveVertex_["WireframeQuad"][3].Position = Vec3f(+Width / 2.0f, -Height / 2.0f, Center.z);
+	PrimitiveVertex_["WireframeQuad"][3].Color = Color;
+
+	for (auto& PrimitiveVertex : PrimitiveVertex_["WireframeQuad"])
+	{
+		Vec3f Position = PrimitiveVertex.Position;
+
+		PrimitiveVertex.Position.x = cos(Rotate) * Position.x - sin(Rotate) * Position.y;
+		PrimitiveVertex.Position.y = sin(Rotate) * Position.x + cos(Rotate) * Position.y;
+
+		PrimitiveVertex.Position += Center;
+	}
 
 	RenderPrimitive(Context, "WireframeQuad", ERenderType::LINE);
 }
@@ -175,7 +183,6 @@ void PrimitiveShader2D::BuildVertexAndIndexBuffer(ID3D11Device* Device, const st
 
 	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_[Name], &PrimitiveVertexBuffer_[Name]), "failed to create vertex buffer");
 	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_[Name], &PrimitiveIndexBuffer_[Name]), "failed to create index buffer");
-
 }
 
 void PrimitiveShader2D::RenderPrimitive(ID3D11DeviceContext* Context, const std::string& PrimitiveSignature, const ERenderType& RenderType)
