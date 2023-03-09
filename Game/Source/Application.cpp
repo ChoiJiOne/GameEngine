@@ -5,6 +5,13 @@
 #include "InputManager.h"
 #include "Window.h"
 
+
+/**
+ * 테스트용 헤더 선언 추가
+ */
+#include "Font.h"
+#include "Texture2D.h"
+
 #include <memory>
 
 
@@ -51,11 +58,20 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 		InputManager::Get().BindWindowEvent(WindowEvent.first, WindowEvent.second);
 	}
 
+	std::string FontPath = CommandLine::GetValue("Content") + "Font\\SeoulNamsanEB.ttf";
+	int32_t FontID = RenderManager::Get().CreateFont(FontPath, 32, 55203, 32.0f);
+
+	std::string TexturePath = CommandLine::GetValue("Content") + "Texture\\GrayBlock.png";
+	int32_t TextureID = RenderManager::Get().CreateTexture2D(TexturePath);
+
 	while (!bIsDone_)
 	{
 		InputManager::Get().Tick();
 
 		RenderManager::Get().Clear(Color::BLACK);
+		RenderManager::Get().DrawText2D(FontID, L"한글 출력 확인", Vec2f(0.0f, 0.0f), Color::BLUE);
+		RenderManager::Get().DrawTexture2D(TextureID, Vec2f(0.0f, 200.0f), 100.0f, 100.0f);
+
 		RenderManager::Get().Present();
 	}
 
