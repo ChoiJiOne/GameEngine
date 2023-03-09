@@ -180,6 +180,21 @@ private:
 
 
 	/**
+	 * @brief 정점 버퍼와 인덱스 버퍼를 구성합니다.
+	 * 
+	 * @param Device 버퍼 생성 시 사용할 디바이스입니다.
+	 * @param Name 정점 버퍼와 인덱스 버퍼이 이름입니다.
+	 * @param Vertices 정점 버퍼 구성 시 참조할 정점입니다.
+	 * @param Indices 인덱스 버퍼 구성 시 참조할 인덱스입니다.
+	 * 
+	 * @throws 
+	 * 정점 버퍼와 인덱스 버퍼의 이름이 이미 존재하면 C++ 표준 예외를 던집니다.
+	 * 버퍼 구성에 실패하면 C++ 표준 예외를 던집니다.
+	 */
+	void BuildVertexAndIndexBuffer(ID3D11Device* Device, const std::string& Name, const std::vector<Vertex::PositionColor>& Vertices, const std::vector<uint32_t>& Indices);
+
+
+	/**
 	 * @brief 기본 도형을 화면에 그립니다.
 	 * 
 	 * @param Context 렌더링을 수행할 컨텍스트입니다.

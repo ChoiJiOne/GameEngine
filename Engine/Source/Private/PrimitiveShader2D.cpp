@@ -1,4 +1,5 @@
 #include "PrimitiveShader2D.h"
+#include "Utils.hpp"
 
 PrimitiveShader2D::PrimitiveShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
 {
@@ -19,45 +20,27 @@ PrimitiveShader2D::PrimitiveShader2D(ID3D11Device* Device, const std::wstring& V
 
 	Vertices.resize(1);
 	Indices = { 0 };
-	PrimitiveVertex_["Point"] = Vertices;
-	PrimitiveIndex_["Point"] = Indices;
-	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_["Point"], &PrimitiveVertexBuffer_["Point"]), "failed to create vertex buffer");
-	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_["Point"], &PrimitiveIndexBuffer_["Point"]), "failed to create index buffer");
-
+	BuildVertexAndIndexBuffer(Device, "Point", Vertices, Indices);
+	
 	Vertices.resize(2);
 	Indices = { 0, 1 };
-	PrimitiveVertex_["Line"] = Vertices;
-	PrimitiveIndex_["Line"] = Indices;
-	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_["Line"], &PrimitiveVertexBuffer_["Line"]), "failed to create vertex buffer");
-	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_["Line"], &PrimitiveIndexBuffer_["Line"]), "failed to create index buffer");
+	BuildVertexAndIndexBuffer(Device, "Line", Vertices, Indices);
 
 	Vertices.resize(3);
 	Indices = { 0, 1, 2 };
-	PrimitiveVertex_["Triangle"] = Vertices;
-	PrimitiveIndex_["Triangle"] = Indices;
-	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_["Triangle"], &PrimitiveVertexBuffer_["Triangle"]), "failed to create vertex buffer");
-	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_["Triangle"], &PrimitiveIndexBuffer_["Triangle"]), "failed to create index buffer");
+	BuildVertexAndIndexBuffer(Device, "Triangle", Vertices, Indices);
 
 	Vertices.resize(3);
 	Indices = { 0, 1, 1, 2, 2, 0 };
-	PrimitiveVertex_["WireframeTriangle"] = Vertices;
-	PrimitiveIndex_["WireframeTriangle"] = Indices;
-	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_["WireframeTriangle"], &PrimitiveVertexBuffer_["WireframeTriangle"]), "failed to create vertex buffer");
-	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_["WireframeTriangle"], &PrimitiveIndexBuffer_["WireframeTriangle"]), "failed to create index buffer");
+	BuildVertexAndIndexBuffer(Device, "WireframeTriangle", Vertices, Indices);
 
 	Vertices.resize(4);
 	Indices = { 0, 1, 2, 0, 2, 3};
-	PrimitiveVertex_["Quad"] = Vertices;
-	PrimitiveIndex_["Quad"] = Indices;
-	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_["Quad"], &PrimitiveVertexBuffer_["Quad"]), "failed to create vertex buffer");
-	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_["Quad"], &PrimitiveIndexBuffer_["Quad"]), "failed to create index buffer");
+	BuildVertexAndIndexBuffer(Device, "Quad", Vertices, Indices);
 
 	Vertices.resize(4);
 	Indices = {0, 1, 1, 2, 2, 3, 3, 0};
-	PrimitiveVertex_["WireframeQuad"] = Vertices;
-	PrimitiveIndex_["WireframeQuad"] = Indices;
-	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_["WireframeQuad"], &PrimitiveVertexBuffer_["WireframeQuad"]), "failed to create vertex buffer");
-	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_["WireframeQuad"], &PrimitiveIndexBuffer_["WireframeQuad"]), "failed to create index buffer");
+	BuildVertexAndIndexBuffer(Device, "WireframeQuad", Vertices, Indices);
 }
 
 PrimitiveShader2D::~PrimitiveShader2D()
@@ -180,6 +163,19 @@ void PrimitiveShader2D::RenderWireframeQuad(
 	PrimitiveVertex_["WireframeQuad"][3].Color = ColorTo;
 
 	RenderPrimitive(Context, "WireframeQuad", ERenderType::LINE);
+}
+
+void PrimitiveShader2D::BuildVertexAndIndexBuffer(ID3D11Device* Device, const std::string& Name, const std::vector<Vertex::PositionColor>& Vertices, const std::vector<uint32_t>& Indices)
+{
+	//CHECK(IsExistKey<std::string, std::vector<Vertex::PositionColor>>(Name, PrimitiveVertex_) == false, "already exist vertex buffer name");
+	//CHECK(IsExistKey<std::string, std::vector<uint32_t>>(Name, PrimitiveIndex_), "already exist index buffer name");
+
+	PrimitiveVertex_[Name] = Vertices;
+	PrimitiveIndex_[Name] = Indices;
+
+	CHECK_HR(CreateDynamicVertexBuffer(Device, PrimitiveVertex_[Name], &PrimitiveVertexBuffer_[Name]), "failed to create vertex buffer");
+	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_[Name], &PrimitiveIndexBuffer_[Name]), "failed to create index buffer");
+
 }
 
 void PrimitiveShader2D::RenderPrimitive(ID3D11DeviceContext* Context, const std::string& PrimitiveSignature, const ERenderType& RenderType)
