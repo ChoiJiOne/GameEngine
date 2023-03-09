@@ -1,5 +1,6 @@
 #include "CrashHandler.h"
 #include "CommandLine.h"
+#include "GameTimer.h"
 #include "RenderManager.h"
 #include "Shader.h"
 #include "InputManager.h"
@@ -9,7 +10,7 @@
 /**
  * 테스트용 헤더 선언 추가
  */
-#include "Font.h"
+#include "TTFont.h"
 #include "Texture2D.h"
 
 #include <memory>
@@ -42,6 +43,7 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	std::function<void()> CloseEvent = [&]() { bIsDone_ = true; };
 	std::function<void()> ResizeEvent = [&]() {
 		RenderManager::Get().Resize();
+
 		float Width = 0.0f, Height = 0.0f;
 		RenderManager::Get().GetBackBufferSize(Width, Height);
 		RenderManager::Get().SetViewport(0.0f, 0.0f, Width, Height);
@@ -59,19 +61,27 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	}
 
 	std::string FontPath = CommandLine::GetValue("Content") + "Font\\SeoulNamsanEB.ttf";
-	int32_t FontID = RenderManager::Get().CreateFont(FontPath, 32, 55203, 32.0f);
+	int32_t FontID = RenderManager::Get().CreateTTFont(FontPath, 32, 55203, 32.0f);
 
 	std::string TexturePath = CommandLine::GetValue("Content") + "Texture\\GrayBlock.png";
 	int32_t TextureID = RenderManager::Get().CreateTexture2D(TexturePath);
 
+	GameTimer Timer;
+
 	while (!bIsDone_)
 	{
+		Timer.Tick();
 		InputManager::Get().Tick();
 
 		RenderManager::Get().Clear(Color::BLACK);
 		RenderManager::Get().DrawText2D(FontID, L"한글 출력 확인", Vec2f(0.0f, 0.0f), Color::BLUE);
-		RenderManager::Get().DrawTexture2D(TextureID, Vec2f(0.0f, 200.0f), 100.0f, 100.0f);
-
+		RenderManager::Get().DrawWireframeQuad2D(
+			Vec2f(-50.0f,  50.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+			Vec2f(-50.0f, 150.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+			Vec2f(+50.0f, 150.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+			Vec2f(+50.0f,  50.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f)
+		);
+		RenderManager::Get().DrawTexture2D(TextureID, Vec2f(0.0f, 100.0f), 100.0f, 100.0f);
 		RenderManager::Get().Present();
 	}
 
