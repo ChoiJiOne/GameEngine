@@ -177,7 +177,7 @@ public:
 	 * 
 	 * @return 생성된 폰트의 아이디를 반환합니다.
 	 */
-	int32_t CreateFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize);
+	int32_t CreateTTFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize);
 
 
 	/**

@@ -212,7 +212,7 @@ int32_t RenderManager::CreateTexture2D(const std::string& ResourcePath)
 	return CountTextureResource_++;
 }
 
-int32_t RenderManager::CreateFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize)
+int32_t RenderManager::CreateTTFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize)
 {
 	std::unique_ptr<TTFont> FontResource = std::make_unique<TTFont>(Device_, ResourcePath, BeginCodePoint, EndCodePoint, FontSize);
 
@@ -291,17 +291,16 @@ void RenderManager::DrawWireframeQuad2D(const Vec2f& PositionFrom, const LinearC
 
 void RenderManager::DrawTexture2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate)
 {
-	SpriteShader2D* TextureShader = reinterpret_cast<SpriteShader2D*>(Shaders_["Texture"].get());
+	SpriteShader2D* Shader2D = reinterpret_cast<SpriteShader2D*>(Shaders_["Texture"].get());
 
-	TextureShader->SetWorldMatrix(GetRotateMatrix(Rotate));
-	TextureShader->RenderTexture2D(Context_, *Textures_[TextureID].get(), Vec3f(Center.x, Center.y, 0.0f), Width, Height);
+	Shader2D->RenderTexture2D(Context_, *Textures_[TextureID].get(), Vec3f(Center.x, Center.y, 0.0f), Width, Height, Rotate);
 }
 
 void RenderManager::DrawText2D(int32_t FontID, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color)
 {
-	TextShader2D* TextShader = reinterpret_cast<TextShader2D*>(Shaders_["Text"].get());
+	TextShader2D* Shader2D = reinterpret_cast<TextShader2D*>(Shaders_["Text"].get());
 
-	TextShader->RenderText2D(Context_, *Fonts_[FontID], Text, Vec3f(Center.x, Center.y, 0.0f), Color);
+	Shader2D->RenderText2D(Context_, *Fonts_[FontID], Text, Vec3f(Center.x, Center.y, 0.0f), Color);
 }
 
 RenderManager::~RenderManager()
