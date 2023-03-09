@@ -150,6 +150,37 @@ public:
 
 
 	/**
+	 * @brief 텍스처를 생성하고 생성된 텍스처의 아이디를 얻습니다.
+	 * 
+	 * @param ResourcePath 텍스처 파일 경로입니다.
+	 *
+	 * @throws
+	 * 텍스처 파일 로딩에 실패하면 C++ 표준 예외를 던집니다.
+	 * 텍스처 리소스 생성에 실패하면 C++ 표준 예외를 던집니다.
+	 * 
+	 * @return 생성된 텍스처의 아이디를 반환합니다.
+	 */
+	int32_t CreateTexture2D(const std::string& ResourcePath);
+
+
+	/**
+	 * @brief 폰트를 생성하고 생성된 폰트의 아이디를 얻습니다.
+	 * 
+	 * @param ResourcePath 트루 타입 폰트 파일의 경로입니다.
+	 * @param BeginCodePoint 문자 텍스처 아틀라스의 코드 포인트 시작점입니다.
+	 * @param EndCodePoint 문자 텍스처 아틀라스의 코드 포인트 끝점입니다.
+	 * @param FontSize 폰트의 크기입니다.
+	 * 
+	 * @throws
+	 * 트루 타입 폰트 로딩에 실패하면 C++ 표준 예외를 던집니다.
+	 * 텍스처 아틀라스 생성에 실패하면 C++ 표준 예외를 던집니다.
+	 * 
+	 * @return 생성된 폰트의 아이디를 반환합니다.
+	 */
+	int32_t CreateFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize);
+
+
+	/**
 	 * @brief 화면에 2D 점을 그립니다.
 	 * 
 	 * @param Position 점의 위치입니다.
@@ -251,24 +282,24 @@ public:
 	 * 
 	 * @ntoe 회전각은 라디안 기준입니다.
 	 * 
-	 * @param Texture 렌더링 대상이 되는 2D 텍스처입니다.
+	 * @param TextureID 렌더링 대상이 되는 2D 텍스처의 아이디입니다.
 	 * @param Center 텍스처의 중심 좌표입니다.
 	 * @param Width 텍스처의 가로 크기입니다.
 	 * @param Height 텍스처의 세로 크기입니다.
 	 * @param Rotate 텍스처의 회전 각도입니다. 기본 값은 0.0입니다.
 	 */
-	void DrawTexture2D(Texture2D& Texture, const Vec2f& Center, float Width, float Height, float Rotate = 0.0f);
+	void DrawTexture2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate = 0.0f);
 
 
 	/**
 	 * @brief 화면에 2D 텍스트를 그립니다.
 	 * 
-	 * @param FontResource 텍스트를 렌더링할 때 참조할 폰트 리소스입니다.
+	 * @param FontID 텍스트를 렌더링할 때 참조할 폰트의 아이디입니다.
 	 * @param Text 렌더링할 텍스트입니다.
 	 * @param Center 텍스처의 중심 좌표입니다.
 	 * @param Color 텍스트의 색상입니다.
 	 */
-	void DrawText2D(Font& FontResource, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color);
+	void DrawText2D(int32_t FontID, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color);
 
 
 private:
@@ -450,4 +481,30 @@ private:
 	 * @brief 렌더링 시 사용할 셰이더입니다.
 	 */
 	std::unordered_map<std::string, std::unique_ptr<Shader>> Shaders_;
+
+
+	/**
+	 * @brief 관리 중인 텍스처 리소스입니다.
+	 */
+	std::vector<std::unique_ptr<Texture2D>> Textures_;
+
+
+	/**
+	 * @brief 렌더 메니저에서 생성된 텍스처 리소스의 수입니다.
+	 * 
+	 * @note 생성된 텍스처 리소스의 수를 기반으로 아이디를 생성합니다.
+	 */
+	int32_t CountTextureResource_ = 0;
+
+
+	/**
+	 * @brief 관리 중인 폰트 리소스입니다.
+	 */
+	std::vector<std::unique_ptr<Font>> Fonts_;
+
+
+	/**
+	 * @brief 렌더 메니저에서 생성된 폰트 리소스의 수입니다.
+	 */
+	int32_t CountFontResource_ = 0;
 };

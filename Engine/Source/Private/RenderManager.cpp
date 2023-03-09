@@ -66,6 +66,16 @@ void RenderManager::Setup(Window* MainWindow)
 
 void RenderManager::Cleanup()
 {
+	for (auto& TextureResource : Textures_)
+	{
+		TextureResource.reset();
+	}
+
+	for (auto& FontResource : Fonts_)
+	{
+		FontResource.reset();
+	}
+
 	if (MainWindow_->IsFullScreen() && SwapChain_)
 	{
 		CHECK_HR(SwapChain_->SetFullscreenState(false, nullptr), "failed to set full screen state");
@@ -193,6 +203,24 @@ void RenderManager::Present(bool bIsVSync)
 	CHECK_HR(SwapChain_->Present(static_cast<uint32_t>(bIsVSync), 0), "failed to present backbuffer");
 }
 
+int32_t RenderManager::CreateTexture2D(const std::string& ResourcePath)
+{
+	std::unique_ptr<Texture2D> TextureResource = std::make_unique<Texture2D>(Device_, ResourcePath);
+
+	Textures_.push_back(std::move(TextureResource));
+
+	return CountTextureResource_++;
+}
+
+int32_t RenderManager::CreateFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize)
+{
+	std::unique_ptr<Font> FontResource = std::make_unique<Font>(Device_, ResourcePath, BeginCodePoint, EndCodePoint, FontSize);
+
+	Fonts_.push_back(std::move(FontResource));
+
+	return CountFontResource_++;
+}
+
 void RenderManager::DrawPoint2D(const Vec2f& Position, const LinearColor& Color)
 {
 	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
@@ -261,19 +289,19 @@ void RenderManager::DrawWireframeQuad2D(const Vec2f& PositionFrom, const LinearC
 	);
 }
 
-void RenderManager::DrawTexture2D(Texture2D& Texture, const Vec2f& Center, float Width, float Height, float Rotate)
+void RenderManager::DrawTexture2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate)
 {
 	SpriteShader2D* TextureShader = reinterpret_cast<SpriteShader2D*>(Shaders_["Texture"].get());
 
 	TextureShader->SetWorldMatrix(GetRotateMatrix(Rotate));
-	TextureShader->RenderTexture2D(Context_, Texture, Vec3f(Center.x, Center.y, 0.0f), Width, Height);
+	TextureShader->RenderTexture2D(Context_, *Textures_[TextureID].get(), Vec3f(Center.x, Center.y, 0.0f), Width, Height);
 }
 
-void RenderManager::DrawText2D(Font& FontResource, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color)
+void RenderManager::DrawText2D(int32_t FontID, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color)
 {
 	TextShader2D* TextShader = reinterpret_cast<TextShader2D*>(Shaders_["Text"].get());
 
-	TextShader->RenderText2D(Context_, FontResource, Text, Vec3f(Center.x, Center.y, 0.0f), Color);
+	TextShader->RenderText2D(Context_, *Fonts_[FontID], Text, Vec3f(Center.x, Center.y, 0.0f), Color);
 }
 
 RenderManager::~RenderManager()
