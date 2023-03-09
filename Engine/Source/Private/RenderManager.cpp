@@ -1,6 +1,6 @@
 #include "RenderManager.h"
 #include "CommandLine.h"
-#include "Font.h"
+#include "TTFont.h"
 #include "Window.h"
 #include "Math.hpp"
 #include "TextHelper.hpp"
@@ -214,7 +214,7 @@ int32_t RenderManager::CreateTexture2D(const std::string& ResourcePath)
 
 int32_t RenderManager::CreateFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize)
 {
-	std::unique_ptr<Font> FontResource = std::make_unique<Font>(Device_, ResourcePath, BeginCodePoint, EndCodePoint, FontSize);
+	std::unique_ptr<TTFont> FontResource = std::make_unique<TTFont>(Device_, ResourcePath, BeginCodePoint, EndCodePoint, FontSize);
 
 	Fonts_.push_back(std::move(FontResource));
 

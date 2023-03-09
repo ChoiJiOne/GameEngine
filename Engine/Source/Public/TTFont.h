@@ -28,7 +28,7 @@ struct Glyph
 /**
  * @brief 트루 타입 폰트에 대응하는 문자들의 텍스처 아틀라스입니다.
  */
-class Font
+class TTFont
 {
 public:
 	/**
@@ -44,19 +44,19 @@ public:
 	 * 트루 타입 폰트 로딩에 실패하면 C++ 표준 예외를 던집니다.
 	 * 텍스처 아틀라스 생성에 실패하면 C++ 표준 예외를 던집니다.
 	 */
-	Font(ID3D11Device* Device, const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize);
+	TTFont(ID3D11Device* Device, const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize);
 
 
 	/**
 	 * @brief 폰트의 가상 소멸자입니다.
 	 */
-	virtual ~Font();
+	virtual ~TTFont();
 
 
 	/**
 	 * @brief 복사 생성자와 대입 연산자를 삭제합니다.
 	 */
-	DISALLOW_COPY_AND_ASSIGN(Font);
+	DISALLOW_COPY_AND_ASSIGN(TTFont);
 
 
 	/**

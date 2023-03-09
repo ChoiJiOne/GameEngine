@@ -10,7 +10,7 @@
 
 class Window;
 class Texture2D;
-class Font;
+class TTFont;
 
 
 /**
@@ -500,7 +500,7 @@ private:
 	/**
 	 * @brief 관리 중인 폰트 리소스입니다.
 	 */
-	std::vector<std::unique_ptr<Font>> Fonts_;
+	std::vector<std::unique_ptr<TTFont>> Fonts_;
 
 
 	/**

@@ -1,4 +1,4 @@
-#include "Font.h"
+#include "TTFont.h"
 #include "Utils.hpp"
 
 // @third party code - BEGIN
@@ -6,7 +6,7 @@
 #include <stb/stb_truetype.h>
 // @third party code - END
 
-Font::Font(ID3D11Device* Device, const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize)
+TTFont::TTFont(ID3D11Device* Device, const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize)
 	: BeginCodePoint_(BeginCodePoint)
 	, EndCodePoint_(EndCodePoint)
 {
@@ -25,25 +25,25 @@ Font::Font(ID3D11Device* Device, const std::string& ResourcePath, int32_t BeginC
 	CHECK_HR(CreateTextureAtlasFromBitmap(Device, AtlasBitmap, AtlasSize_), "failed to create texture atlas");
 }
 
-Font::~Font()
+TTFont::~TTFont()
 {
 	SAFE_RELEASE(TextureAtlas_);
 	SAFE_RELEASE(TextureAtlasView_);
 }
 
-const Glyph& Font::GetGlyph(int32_t CodePoint) const
+const Glyph& TTFont::GetGlyph(int32_t CodePoint) const
 {
 	CHECK(HasCodePointInRange(CodePoint), "code point is out of range");
 	int32_t Index = CodePoint - BeginCodePoint_;
 	return Glyphs_[Index];
 }
 
-bool Font::HasCodePointInRange(int32_t CodePoint) const
+bool TTFont::HasCodePointInRange(int32_t CodePoint) const
 {
 	return (BeginCodePoint_ <= CodePoint) && (CodePoint <= EndCodePoint_);
 }
 
-std::shared_ptr<uint8_t[]> Font::GenerateTextureAtlasBitmap(
+std::shared_ptr<uint8_t[]> TTFont::GenerateTextureAtlasBitmap(
 	const std::vector<uint8_t>& Buffer, 
 	int32_t BeginCodePoint, 
 	int32_t EndCodePoint, 
@@ -107,7 +107,7 @@ std::shared_ptr<uint8_t[]> Font::GenerateTextureAtlasBitmap(
 	return Bitmap;
 }
 
-HRESULT Font::CreateTextureAtlasFromBitmap(ID3D11Device* Device, const std::shared_ptr<uint8_t[]>& Bitmap, const int32_t& AtlasSize)
+HRESULT TTFont::CreateTextureAtlasFromBitmap(ID3D11Device* Device, const std::shared_ptr<uint8_t[]>& Bitmap, const int32_t& AtlasSize)
 {
 	HRESULT HR = S_OK;
 

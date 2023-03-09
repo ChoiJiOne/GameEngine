@@ -3,7 +3,7 @@
 #include "Math.hpp"
 #include "Shader.h"
 
-class Font;
+class TTFont;
 
 
 /**
@@ -74,7 +74,7 @@ public:
 	 * @param Center 텍스처의 중심 좌표입니다.
 	 * @param Color 텍스트의 색상입니다.
 	 */
-	void RenderText2D(ID3D11DeviceContext* Context, Font& FontResource, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color);
+	void RenderText2D(ID3D11DeviceContext* Context, TTFont& FontResource, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color);
 
 
 private:

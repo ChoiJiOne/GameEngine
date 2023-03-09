@@ -1,5 +1,5 @@
 #include "TextShader2D.h"
-#include "Font.h"
+#include "TTFont.h"
 
 TextShader2D::TextShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
 {
@@ -33,7 +33,7 @@ TextShader2D::~TextShader2D()
 	SAFE_RELEASE(EveryFrameBuffer_);
 }
 
-void TextShader2D::RenderText2D(ID3D11DeviceContext* Context, Font& FontResource, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color)
+void TextShader2D::RenderText2D(ID3D11DeviceContext* Context, TTFont& FontResource, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color)
 {
 	float TextWidth = 0.0f, TextHeight = 0.0f;
 	FontResource.MeasureText<float>(Text, TextWidth, TextHeight);
