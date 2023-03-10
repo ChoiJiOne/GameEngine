@@ -194,23 +194,34 @@ void PrimitiveShader2D::RenderWireframeQuad(ID3D11DeviceContext* Context, const 
 
 void PrimitiveShader2D::RenderFillCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
 {
-	for (std::size_t Index = 0; PrimitiveVertex_["Circle"].size() - 1; ++Index)
+	std::size_t VertexSize = PrimitiveVertex_["Circle"].size() - 1;
+
+	float Theta = 0.0f;
+	for (std::size_t Index = 0; Index < VertexSize; ++Index)
 	{
+		Theta = 2.0f * PI_F * (static_cast<float>(Index) / static_cast<float>(VertexSize));
 
+		PrimitiveVertex_["Circle"][Index].Position = Vec3f(Radius * cos(Theta), Radius  *sin(Theta), 0.0f) + Center;
+		PrimitiveVertex_["Circle"][Index].Color = Color;
 	}
-
-	std::size_t VertexSize = PrimitiveVertex_["Circle"].size();
-	PrimitiveVertex_["Circle"][VertexSize - 1].Position = Center;
-	PrimitiveVertex_["Circle"][VertexSize - 1].Color = Color;
+	
+	PrimitiveVertex_["Circle"][PrimitiveVertex_["Circle"].size() - 1].Position = Center;
+	PrimitiveVertex_["Circle"][PrimitiveVertex_["Circle"].size() - 1].Color = Color;
 
 	RenderPrimitive(Context, "Circle", ERenderType::TRIANGLE);
 }
 
 void PrimitiveShader2D::RenderWireframeCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
 {
-	for (std::size_t Index = 0; PrimitiveVertex_["WireframeCircle"].size(); ++Index)
-	{
+	std::size_t VertexSize = PrimitiveVertex_["WireframeCircle"].size();
 
+	float Theta = 0.0f;
+	for (std::size_t Index = 0; Index < VertexSize; ++Index)
+	{
+		Theta = 2.0f * PI_F * (static_cast<float>(Index) / static_cast<float>(VertexSize));
+
+		PrimitiveVertex_["WireframeCircle"][Index].Position = Vec3f(Radius * cos(Theta), Radius * sin(Theta), 0.0f) + Center;
+		PrimitiveVertex_["WireframeCircle"][Index].Color = Color;
 	}
 
 	RenderPrimitive(Context, "WireframeCircle", ERenderType::LINE);
