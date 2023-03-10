@@ -1,7 +1,7 @@
-#include "TextShader2D.h"
+#include "TextRender2DShader.h"
 #include "TTFont.h"
 
-TextShader2D::TextShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
+TextRender2DShader::TextRender2DShader(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutElements = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -24,7 +24,7 @@ TextShader2D::TextShader2D(ID3D11Device* Device, const std::wstring& VertexShade
 	CHECK_HR(CreateIndexBuffer(Device, CharacterIndex_, &CharacterIndexBuffer_), "failed to create index buffer");
 }
 
-TextShader2D::~TextShader2D()
+TextRender2DShader::~TextRender2DShader()
 {
 	SAFE_RELEASE(LinearSampler_);
 	SAFE_RELEASE(CharacterIndexBuffer_);
@@ -33,18 +33,18 @@ TextShader2D::~TextShader2D()
 	SAFE_RELEASE(EveryFrameBuffer_);
 }
 
-void TextShader2D::RenderText2D(ID3D11DeviceContext* Context, TTFont& FontResource, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color)
+void TextRender2DShader::RenderText2D(ID3D11DeviceContext* Context, TTFont& Font, const std::wstring& Text, const Vec3f& Center, const Vec4f& Color)
 {
 	float TextWidth = 0.0f, TextHeight = 0.0f;
-	FontResource.MeasureText<float>(Text, TextWidth, TextHeight);
+	Font.MeasureText<float>(Text, TextWidth, TextHeight);
 
-	float AtlasSize = static_cast<float>(FontResource.GetAtlasSize());
+	float AtlasSize = static_cast<float>(Font.GetAtlasSize());
 
 	Vec3f Position(Center.x - TextWidth / 2.0f, Center.y - TextHeight / 2.0f, Center.z);
 
 	for (auto& Unicode : Text)
 	{
-		const Glyph& UnicodeInfo = FontResource.GetGlyph(static_cast<int32_t>(Unicode));
+		const Glyph& UnicodeInfo = Font.GetGlyph(static_cast<int32_t>(Unicode));
 
 		float UniucodeWidth = static_cast<float>(UnicodeInfo.Position1.x - UnicodeInfo.Position0.x);
 		float UniucodeHeight = static_cast<float>(UnicodeInfo.Position1.y - UnicodeInfo.Position0.y);
@@ -92,18 +92,18 @@ void TextShader2D::RenderText2D(ID3D11DeviceContext* Context, TTFont& FontResour
 
 		if (SUCCEEDED(Context->Map(EveryFrameBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMappedResource)))
 		{
-			EveryFramConstantBuffer* Buffer = reinterpret_cast<EveryFramConstantBuffer*>(ConstantBufferMappedResource.pData);
+			EveryFramConstantBuffer* BufferPtr = reinterpret_cast<EveryFramConstantBuffer*>(ConstantBufferMappedResource.pData);
 
-			Buffer->Projection = EveryFrameBufferResource_.Projection;
+			BufferPtr->Projection = EveryFrameBufferResource_.Projection;
 
 			Context->Unmap(EveryFrameBuffer_, 0);
 		}
 
 		if (SUCCEEDED(Context->Map(TextColorBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMappedResource)))
 		{
-			TextColorConstantBuffer* Buffer = reinterpret_cast<TextColorConstantBuffer*>(ConstantBufferMappedResource.pData);
+			TextColorConstantBuffer* BufferPtr = reinterpret_cast<TextColorConstantBuffer*>(ConstantBufferMappedResource.pData);
 
-			Buffer->TextColor = Color;
+			BufferPtr->TextColor = Color;
 
 			Context->Unmap(TextColorBuffer_, 0);
 		}
@@ -115,7 +115,7 @@ void TextShader2D::RenderText2D(ID3D11DeviceContext* Context, TTFont& FontResour
 		Context->PSSetSamplers(SamplerBindSlot, 1, &LinearSampler_);
 
 		uint32_t TextureBindSlot = 0;
-		ID3D11ShaderResourceView* TextureAtlasView = FontResource.GetTextureAtlasView();
+		ID3D11ShaderResourceView* TextureAtlasView = Font.GetTextureAtlasView();
 		Context->PSSetShaderResources(TextureBindSlot, 1, &TextureAtlasView);
 
 		Context->PSSetConstantBuffers(BindSlot, 1, &TextColorBuffer_);

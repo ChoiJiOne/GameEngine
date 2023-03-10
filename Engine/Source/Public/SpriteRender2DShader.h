@@ -9,18 +9,8 @@ class Texture2D;
 /**
  * @brief 2D 텍스처를 렌더링하는 셰이더입니다.
  */
-class SpriteShader2D : public Shader
+class SpriteRender2DShader : public Shader
 {
-public:
-	/**
-	 * @brief 매 프레임 변경되는 셰이더 내의 상수 버퍼입니다.
-	 */
-	struct EveryFramConstantBuffer
-	{
-		Matrix4x4F Projection;
-	};
-
-
 public:
 	/**
 	 * @brief 셰이더를 컴파일하고 정점 셰이더와 픽셀 셰이더를 생성합니다.
@@ -33,19 +23,19 @@ public:
 	 * 셰이더 컴파일에 실패하면 C++ 표준 예외를 던집니다.
 	 * 셰이더 리소스 생성에 실패하면 C++ 표준 예외를 던집니다.
 	 */
-	SpriteShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath);
+	SpriteRender2DShader(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath);
 
 
 	/**
 	 * @brief 2D 텍스처를 렌더링하는 셰이더의 가상 소멸자입니다.
 	 */
-	virtual ~SpriteShader2D();
+	virtual ~SpriteRender2DShader();
 
 
 	/**
 	 * @brief 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
 	 */
-	DISALLOW_COPY_AND_ASSIGN(SpriteShader2D);
+	DISALLOW_COPY_AND_ASSIGN(SpriteRender2DShader);
 
 
 	/**
@@ -57,19 +47,29 @@ public:
 
 
 	/**
-	 * @brief 백 버퍼에 2D 텍스처를 그립니다.
+	 * @brief 백 버퍼에 2D 스프라이트를 그립니다.
 	 * 
 	 * @ntoe 회전각은 라디안 기준입니다.
 	 * 
 	 * @param Context 렌더링을 수행할 컨텍스트입니다.
-	 * @param Texture 렌더링 대상이 되는 2D 텍스처입니다.
+	 * @param Texture 렌더링 대상이 되는 2D 스프라이트의 텍스처입니다.
 	 * @param Center 텍스처의 중심 좌표입니다.
 	 * @param Width 텍스처의 가로 크기입니다.
 	 * @param Height 텍스처의 세로 크기입니다.
 	 * @param Rotate 텍스처의 회전 각도입니다. 기본 값은 0.0입니다.
 	 */
-	void RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height, float Rotate = 0.0f);
+	void RenderSprite2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height, float Rotate = 0.0f);
 	
+
+private:
+	/**
+	 * @brief 매 프레임 변경되는 셰이더 내의 상수 버퍼입니다.
+	 */
+	struct EveryFramConstantBuffer
+	{
+		Matrix4x4F Projection;
+	};
+
 
 private:
 	/**

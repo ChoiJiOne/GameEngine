@@ -1,7 +1,7 @@
-#include "SpriteShader2D.h"
+#include "SpriteRender2DShader.h"
 #include "Texture2D.h"
 
-SpriteShader2D::SpriteShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
+SpriteRender2DShader::SpriteRender2DShader(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutElements = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -23,7 +23,7 @@ SpriteShader2D::SpriteShader2D(ID3D11Device* Device, const std::wstring& VertexS
 	CHECK_HR(CreateIndexBuffer(Device, QuadTextureIndex_, &QuadTextureIndexBuffer_), "failed to create index buffer");
 }
 
-SpriteShader2D::~SpriteShader2D()
+SpriteRender2DShader::~SpriteRender2DShader()
 {
 	SAFE_RELEASE(LinearSampler_);
 	SAFE_RELEASE(QuadTextureIndexBuffer_);
@@ -31,7 +31,7 @@ SpriteShader2D::~SpriteShader2D()
 	SAFE_RELEASE(EveryFrameBuffer_);
 }
 
-void SpriteShader2D::RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height, float Rotate)
+void SpriteRender2DShader::RenderSprite2D(ID3D11DeviceContext* Context, Texture2D& Texture, const Vec3f& Center, float Width, float Height, float Rotate)
 {
 	QuadTextureVertex_[0].Position = Vec3f(-Width / 2.0f, -Height / 2.0f, Center.z);
 	QuadTextureVertex_[0].UV       = Vec2f(0.0f, 1.0f);
@@ -86,9 +86,9 @@ void SpriteShader2D::RenderTexture2D(ID3D11DeviceContext* Context, Texture2D& Te
 
 	if (SUCCEEDED(Context->Map(EveryFrameBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMappedResource)))
 	{
-		EveryFramConstantBuffer* Buffer = reinterpret_cast<EveryFramConstantBuffer*>(ConstantBufferMappedResource.pData);
+		EveryFramConstantBuffer* BufferPtr = reinterpret_cast<EveryFramConstantBuffer*>(ConstantBufferMappedResource.pData);
 
-		Buffer->Projection = EveryFrameBufferResource_.Projection;
+		BufferPtr->Projection = EveryFrameBufferResource_.Projection;
 
 		Context->Unmap(EveryFrameBuffer_, 0);
 	}

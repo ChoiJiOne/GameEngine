@@ -1,7 +1,7 @@
-#include "PrimitiveShader2D.h"
+#include "PrimitiveRender2DShader.h"
 #include "Utils.hpp"
 
-PrimitiveShader2D::PrimitiveShader2D(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
+PrimitiveRender2DShader::PrimitiveRender2DShader(ID3D11Device* Device, const std::wstring& VertexShaderSourcePath, const std::wstring& PixelShaderSourcePath)
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutElements = {
 		{ "POSITION", 0,    DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -46,9 +46,9 @@ PrimitiveShader2D::PrimitiveShader2D(ID3D11Device* Device, const std::wstring& V
 	Indices = {};
 	for (std::size_t Index = 0; Index < Vertices.size() - 1; ++Index)
 	{
-		Indices.push_back(Vertices.size() - 1);
-		Indices.push_back((Index + 0) % (Vertices.size() - 1));
-		Indices.push_back((Index + 1) % (Vertices.size() - 1));
+		Indices.push_back(static_cast<uint32_t>(Vertices.size() - 1));
+		Indices.push_back(static_cast<uint32_t>((Index + 0) % (Vertices.size() - 1)));
+		Indices.push_back(static_cast<uint32_t>((Index + 1) % (Vertices.size() - 1)));
 	}
 	BuildVertexAndIndexBuffer(Device, "Circle", Vertices, Indices);
 
@@ -56,13 +56,13 @@ PrimitiveShader2D::PrimitiveShader2D(ID3D11Device* Device, const std::wstring& V
 	Indices = {};
 	for (std::size_t Index = 0; Index < Vertices.size(); ++Index)
 	{
-		Indices.push_back((Index + 0) % Vertices.size());
-		Indices.push_back((Index + 1) % Vertices.size());
+		Indices.push_back(static_cast<uint32_t>((Index + 0) % Vertices.size()));
+		Indices.push_back(static_cast<uint32_t>((Index + 1) % Vertices.size()));
 	}
 	BuildVertexAndIndexBuffer(Device, "WireframeCircle", Vertices, Indices);
 }
 
-PrimitiveShader2D::~PrimitiveShader2D()
+PrimitiveRender2DShader::~PrimitiveRender2DShader()
 {
 	for (auto& VertexBuffer : PrimitiveVertexBuffer_)
 	{
@@ -77,7 +77,7 @@ PrimitiveShader2D::~PrimitiveShader2D()
 	SAFE_RELEASE(EveryFrameBuffer_);
 }
 
-void PrimitiveShader2D::RenderPoint(ID3D11DeviceContext* Context, const Vec3f& Position, const Vec4f& Color)
+void PrimitiveRender2DShader::RenderPoint(ID3D11DeviceContext* Context, const Vec3f& Position, const Vec4f& Color)
 {
 	PrimitiveVertex_["Point"][0].Position = Position;
 	PrimitiveVertex_["Point"][0].Color = Color;
@@ -85,7 +85,7 @@ void PrimitiveShader2D::RenderPoint(ID3D11DeviceContext* Context, const Vec3f& P
 	RenderPrimitive(Context, "Point", ERenderType::POINT);
 }
 
-void PrimitiveShader2D::RenderLine(
+void PrimitiveRender2DShader::RenderLine(
 	ID3D11DeviceContext* Context, 
 	const Vec3f& PositionFrom, const Vec4f& ColorFrom, 
 	const Vec3f& PositionTo, const Vec4f& ColorTo
@@ -100,7 +100,7 @@ void PrimitiveShader2D::RenderLine(
 	RenderPrimitive(Context, "Line", ERenderType::LINE);
 }
 
-void PrimitiveShader2D::RenderFillTriangle(
+void PrimitiveRender2DShader::RenderFillTriangle(
 	ID3D11DeviceContext* Context, 
 	const Vec3f& PositionFrom, const Vec4f& ColorFrom, 
 	const Vec3f& PositionBy, const Vec4f& ColorBy, 
@@ -119,7 +119,7 @@ void PrimitiveShader2D::RenderFillTriangle(
 	RenderPrimitive(Context, "Triangle", ERenderType::TRIANGLE);
 }
 
-void PrimitiveShader2D::RenderWireframeTriangle(
+void PrimitiveRender2DShader::RenderWireframeTriangle(
 	ID3D11DeviceContext* Context, 
 	const Vec3f& PositionFrom, const Vec4f& ColorFrom, 
 	const Vec3f& PositionBy, const Vec4f& ColorBy, 
@@ -138,7 +138,7 @@ void PrimitiveShader2D::RenderWireframeTriangle(
 	RenderPrimitive(Context, "WireframeTriangle", ERenderType::LINE);
 }
 
-void PrimitiveShader2D::RenderFillQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate)
+void PrimitiveRender2DShader::RenderFillQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate)
 {
 	PrimitiveVertex_["Quad"][0].Position = Vec3f(-Width / 2.0f, -Height / 2.0f, Center.z);
 	PrimitiveVertex_["Quad"][0].Color = Color;
@@ -165,7 +165,7 @@ void PrimitiveShader2D::RenderFillQuad(ID3D11DeviceContext* Context, const Vec3f
 	RenderPrimitive(Context, "Quad", ERenderType::TRIANGLE);
 }
 
-void PrimitiveShader2D::RenderWireframeQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate)
+void PrimitiveRender2DShader::RenderWireframeQuad(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Width, float Height, float Rotate)
 {
 	PrimitiveVertex_["WireframeQuad"][0].Position = Vec3f(-Width / 2.0f, -Height / 2.0f, Center.z);
 	PrimitiveVertex_["WireframeQuad"][0].Color = Color;
@@ -192,7 +192,7 @@ void PrimitiveShader2D::RenderWireframeQuad(ID3D11DeviceContext* Context, const 
 	RenderPrimitive(Context, "WireframeQuad", ERenderType::LINE);
 }
 
-void PrimitiveShader2D::RenderFillCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
+void PrimitiveRender2DShader::RenderFillCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
 {
 	std::size_t VertexSize = PrimitiveVertex_["Circle"].size() - 1;
 
@@ -211,7 +211,7 @@ void PrimitiveShader2D::RenderFillCircle(ID3D11DeviceContext* Context, const Vec
 	RenderPrimitive(Context, "Circle", ERenderType::TRIANGLE);
 }
 
-void PrimitiveShader2D::RenderWireframeCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
+void PrimitiveRender2DShader::RenderWireframeCircle(ID3D11DeviceContext* Context, const Vec3f& Center, const Vec4f& Color, float Radius)
 {
 	std::size_t VertexSize = PrimitiveVertex_["WireframeCircle"].size();
 
@@ -227,11 +227,8 @@ void PrimitiveShader2D::RenderWireframeCircle(ID3D11DeviceContext* Context, cons
 	RenderPrimitive(Context, "WireframeCircle", ERenderType::LINE);
 }
 
-void PrimitiveShader2D::BuildVertexAndIndexBuffer(ID3D11Device* Device, const std::string& Name, const std::vector<Vertex::PositionColor>& Vertices, const std::vector<uint32_t>& Indices)
+void PrimitiveRender2DShader::BuildVertexAndIndexBuffer(ID3D11Device* Device, const std::string& Name, const std::vector<Vertex::PositionColor>& Vertices, const std::vector<uint32_t>& Indices)
 {
-	//CHECK(IsExistKey<std::string, std::vector<Vertex::PositionColor>>(Name, PrimitiveVertex_) == false, "already exist vertex buffer name");
-	//CHECK(IsExistKey<std::string, std::vector<uint32_t>>(Name, PrimitiveIndex_), "already exist index buffer name");
-
 	PrimitiveVertex_[Name] = Vertices;
 	PrimitiveIndex_[Name] = Indices;
 
@@ -239,7 +236,7 @@ void PrimitiveShader2D::BuildVertexAndIndexBuffer(ID3D11Device* Device, const st
 	CHECK_HR(CreateIndexBuffer(Device, PrimitiveIndex_[Name], &PrimitiveIndexBuffer_[Name]), "failed to create index buffer");
 }
 
-void PrimitiveShader2D::RenderPrimitive(ID3D11DeviceContext* Context, const std::string& PrimitiveSignature, const ERenderType& RenderType)
+void PrimitiveRender2DShader::RenderPrimitive(ID3D11DeviceContext* Context, const std::string& PrimitiveSignature, const ERenderType& RenderType)
 {
 	D3D_PRIMITIVE_TOPOLOGY Topology;
 
@@ -292,9 +289,9 @@ void PrimitiveShader2D::RenderPrimitive(ID3D11DeviceContext* Context, const std:
 
 	if (SUCCEEDED(Context->Map(EveryFrameBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMappedResource)))
 	{
-		EveryFramConstantBuffer* Buffer = reinterpret_cast<EveryFramConstantBuffer*>(ConstantBufferMappedResource.pData);
+		EveryFramConstantBuffer* BufferPtr = reinterpret_cast<EveryFramConstantBuffer*>(ConstantBufferMappedResource.pData);
 		
-		Buffer->Projection = EveryFrameBufferResource_.Projection;
+		BufferPtr->Projection = EveryFrameBufferResource_.Projection;
 
 		Context->Unmap(EveryFrameBuffer_, 0);
 	}
