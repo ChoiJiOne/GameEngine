@@ -4,6 +4,8 @@
 
 void InputManager::Setup(Window* MainWindow)
 {
+	if (bIsSetup_) return;
+
 	WindowHandle_ = MainWindow->GetHandle();
 
 	LastKeyboardState_ = std::vector<uint8_t>(VIRTUAL_KEYS, 0);
@@ -17,6 +19,8 @@ void InputManager::Setup(Window* MainWindow)
 
 void InputManager::Cleanup()
 {
+	if (!bIsSetup_) return;
+
 	bIsSetup_ = false;
 }
 
