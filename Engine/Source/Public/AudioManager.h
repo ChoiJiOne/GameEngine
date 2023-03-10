@@ -199,18 +199,6 @@ private:
 
 
 	/**
-	 * @brief 사운드 리소스를 생성할 때 사용할 미니 오디오 엔진입니다.
-	 */
-	std::unique_ptr<ma_engine> MiniAudioEngine_ = nullptr;
-
-
-	/**
-	 * @brief 관리 중인 사운드 리소스입니다.
-	 */
-	std::vector<std::unique_ptr<ma_sound>> Sounds_;
-
-
-	/**
 	 * @brief AudioManager에서 생성한 사운드 리소스 수입니다.
 	 */
 	int32_t CountSoundResource_ = 0;
