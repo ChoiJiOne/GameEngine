@@ -201,13 +201,13 @@ private:
 	/**
 	 * @brief 사운드 리소스를 생성할 때 사용할 미니 오디오 엔진입니다.
 	 */
-	ma_engine* MiniAudioEngine_ = nullptr;
+	std::unique_ptr<ma_engine> MiniAudioEngine_ = nullptr;
 
 
 	/**
 	 * @brief 관리 중인 사운드 리소스입니다.
 	 */
-	std::vector<ma_sound*> Sounds_;
+	std::vector<std::unique_ptr<ma_sound>> Sounds_;
 
 
 	/**
