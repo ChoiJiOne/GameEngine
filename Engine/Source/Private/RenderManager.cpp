@@ -31,8 +31,8 @@ void RenderManager::Setup(Window* MainWindow)
 
 	Shaders_["Primitive"] = std::make_unique<PrimitiveRender2DShader>(
 		Device_,
-		ShaderPath + L"PrimitiveRender2DPS.hlsl",
-		ShaderPath + L"PrimitiveRender2DVS.hlsl"
+		ShaderPath + L"PrimitiveRender2DVS.hlsl",
+		ShaderPath + L"PrimitiveRender2DPS.hlsl"
 	);
 
 	Shaders_["Texture"] = std::make_unique<SpriteRender2DShader>(
