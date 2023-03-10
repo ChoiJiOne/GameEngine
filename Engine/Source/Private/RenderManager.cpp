@@ -15,6 +15,8 @@
 
 void RenderManager::Setup(Window* MainWindow)
 {
+	if (bIsSetup_) return;
+
 	MainWindow_ = MainWindow;
 
 	CHECK_HR(CreateDeviceAndContext(MainWindow_->GetHandle()), "failed to create device and context");
@@ -61,10 +63,14 @@ void RenderManager::Setup(Window* MainWindow)
 
 	TextRender2DShader* TextShader = reinterpret_cast<TextRender2DShader*>(Shaders_["Text"].get());
 	TextShader->SetProjectionMatrix(OrthoMatrix);
+
+	bIsSetup_ = true;
 }
 
 void RenderManager::Cleanup()
 {
+	if (!bIsSetup_) return;
+
 	for (auto& TextureResource : Textures_)
 	{
 		TextureResource.reset();
@@ -112,6 +118,8 @@ void RenderManager::Cleanup()
 
 	SAFE_RELEASE(Context_);
 	SAFE_RELEASE(Device_);
+
+	bIsSetup_ = false;
 }
 
 void RenderManager::GetBackBufferSize(float& Width, float& Height)
@@ -294,6 +302,7 @@ void RenderManager::DrawSprite2D(int32_t TextureID, const Vec2f& Center, float W
 {
 	SpriteRender2DShader* Shader2D = reinterpret_cast<SpriteRender2DShader*>(Shaders_["Texture"].get());
 
+	CHECK((0 <= TextureID && TextureID < Textures_.size()), "out of range texture id...");
 	Shader2D->RenderSprite2D(Context_, *Textures_[TextureID].get(), Vec3f(Center.x, Center.y, 0.0f), Width, Height, Rotate);
 }
 
@@ -301,6 +310,7 @@ void RenderManager::DrawText2D(int32_t FontID, const std::wstring& Text, const V
 {
 	TextRender2DShader* Shader2D = reinterpret_cast<TextRender2DShader*>(Shaders_["Text"].get());
 
+	CHECK((0 <= FontID && FontID < Fonts_.size()), "out of range font id...");
 	Shader2D->RenderText2D(Context_, *Fonts_[FontID], Text, Vec3f(Center.x, Center.y, 0.0f), Color);
 }
 

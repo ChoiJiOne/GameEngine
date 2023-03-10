@@ -394,6 +394,12 @@ private:
 
 private:
 	/**
+	 * @brief RenderManager가 초기화되었는지 확인합니다.
+	 */
+	bool bIsSetup_ = false;
+
+
+	/**
 	 * @brief 렌더링이 수행되는 메인 윈도우입니다.
 	 */
 	Window* MainWindow_ = nullptr;
