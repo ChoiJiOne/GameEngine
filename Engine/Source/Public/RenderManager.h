@@ -282,17 +282,17 @@ public:
 
 
 	/**
-	 * @brief 화면에 2D 텍스처를 그립니다.
+	 * @brief 화면에 2D 스프라이트를 그립니다.
 	 * 
 	 * @ntoe 회전각은 라디안 기준입니다.
 	 * 
-	 * @param TextureID 렌더링 대상이 되는 2D 텍스처의 아이디입니다.
-	 * @param Center 텍스처의 중심 좌표입니다.
-	 * @param Width 텍스처의 가로 크기입니다.
-	 * @param Height 텍스처의 세로 크기입니다.
-	 * @param Rotate 텍스처의 회전 각도입니다. 기본 값은 0.0입니다.
+	 * @param TextureID 렌더링 대상이 되는 2D 스프라이의 텍스처 아이디입니다.
+	 * @param Center 스프라이트의 중심 좌표입니다.
+	 * @param Width 스프라이트의 가로 크기입니다.
+	 * @param Height 스프라이트의 세로 크기입니다.
+	 * @param Rotate 스프라이트의 회전 각도입니다. 기본 값은 0.0입니다.
 	 */
-	void DrawTexture2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate = 0.0f);
+	void DrawSprite2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate = 0.0f);
 
 
 	/**

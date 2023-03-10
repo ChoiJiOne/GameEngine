@@ -5,9 +5,9 @@
 #include "Math.hpp"
 #include "TextHelper.hpp"
 #include "Texture2D.h"
-#include "PrimitiveShader2D.h"
-#include "SpriteShader2D.h"
-#include "TextShader2D.h"
+#include "PrimitiveRender2DShader.h"
+#include "SpriteRender2DShader.h"
+#include "TextRender2DShader.h"
 
 #include <array>
 #include <cstdint>
@@ -27,25 +27,24 @@ void RenderManager::Setup(Window* MainWindow)
 	CHECK_HR(CreateRasterizerState(&RasterizerState_["Fill"], false, true), "failed to create fill mode rasterizer state");
 	CHECK_HR(CreateRasterizerState(&RasterizerState_["Wireframe"], false, false), "failed to create wireframe mode rasterizer state");
 
-
 	std::wstring ShaderPath = TextHelper::Convert(CommandLine::GetValue("Shader"));
 
-	Shaders_["Primitive"] = std::make_unique<PrimitiveShader2D>(
+	Shaders_["Primitive"] = std::make_unique<PrimitiveRender2DShader>(
 		Device_,
-		ShaderPath + L"PrimitiveVertexShader2D.hlsl",
-		ShaderPath + L"PrimitivePixelShader2D.hlsl"
+		ShaderPath + L"PrimitiveRender2DPS.hlsl",
+		ShaderPath + L"PrimitiveRender2DVS.hlsl"
 	);
 
-	Shaders_["Texture"] = std::make_unique<SpriteShader2D>(
+	Shaders_["Texture"] = std::make_unique<SpriteRender2DShader>(
 		Device_,
-		ShaderPath + L"SpriteVertexShader2D.hlsl",
-		ShaderPath + L"SpritePixelShader2D.hlsl"
+		ShaderPath + L"SpriteRender2DVS.hlsl",
+		ShaderPath + L"SpriteRender2DPS.hlsl"
 	);
 
-	Shaders_["Text"] = std::make_unique<TextShader2D>(
+	Shaders_["Text"] = std::make_unique<TextRender2DShader>(
 		Device_,
-		ShaderPath + L"TextVertexShader2D.hlsl",
-		ShaderPath + L"TextPixelShader2D.hlsl"
+		ShaderPath + L"TextRender2DVS.hlsl",
+		ShaderPath + L"TextRender2DPS.hlsl"
 	);
 
 	float Width = 0.0f, Height = 0.0f;
@@ -54,13 +53,13 @@ void RenderManager::Setup(Window* MainWindow)
 
 	Matrix4x4F OrthoMatrix = GetOrthographicMatrix(Width, Height, 0.0001f, 100.0f);
 
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 	PrimitiveShader->SetProjectionMatrix(OrthoMatrix);
 
-	SpriteShader2D* TextureShader = reinterpret_cast<SpriteShader2D*>(Shaders_["Texture"].get());
+	SpriteRender2DShader* TextureShader = reinterpret_cast<SpriteRender2DShader*>(Shaders_["Texture"].get());
 	TextureShader->SetProjectionMatrix(OrthoMatrix);
 
-	TextShader2D* TextShader = reinterpret_cast<TextShader2D*>(Shaders_["Text"].get());
+	TextRender2DShader* TextShader = reinterpret_cast<TextRender2DShader*>(Shaders_["Text"].get());
 	TextShader->SetProjectionMatrix(OrthoMatrix);
 }
 
@@ -143,13 +142,13 @@ void RenderManager::Resize()
 		100.0f
 	);
 
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 	PrimitiveShader->SetProjectionMatrix(OrthoMatrix);
 
-	SpriteShader2D* TextureShader = reinterpret_cast<SpriteShader2D*>(Shaders_["Texture"].get());
+	SpriteRender2DShader* TextureShader = reinterpret_cast<SpriteRender2DShader*>(Shaders_["Texture"].get());
 	TextureShader->SetProjectionMatrix(OrthoMatrix);
 
-	TextShader2D* TextShader = reinterpret_cast<TextShader2D*>(Shaders_["Text"].get());
+	TextRender2DShader* TextShader = reinterpret_cast<TextRender2DShader*>(Shaders_["Text"].get());
 	TextShader->SetProjectionMatrix(OrthoMatrix);
 }
 
@@ -223,14 +222,14 @@ int32_t RenderManager::CreateTTFont(const std::string& ResourcePath, int32_t Beg
 
 void RenderManager::DrawPoint2D(const Vec2f& Position, const LinearColor& Color)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderPoint(Context_, Vec3f(Position.x, Position.y, 0.0f), Color);
 }
 
 void RenderManager::DrawLine2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderLine(
 		Context_,
@@ -241,7 +240,7 @@ void RenderManager::DrawLine2D(const Vec2f& PositionFrom, const LinearColor& Col
 
 void RenderManager::DrawFillTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderFillTriangle(
 		Context_,
@@ -253,7 +252,7 @@ void RenderManager::DrawFillTriangle2D(const Vec2f& PositionFrom, const LinearCo
 
 void RenderManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderWireframeTriangle(
 		Context_,
@@ -265,42 +264,42 @@ void RenderManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const Lin
 
 void RenderManager::DrawFillQuad2D(const Vec2f& Center, const LinearColor& Color, float Width, float Height, float Rotate)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderFillQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
 }
 
 void RenderManager::DrawWireframeQuad2D(const Vec2f& Center, const LinearColor& Color, float Width, float Height, float Rotate)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderWireframeQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
 }
 
 void RenderManager::DrawFillCircle(const Vec2f& Center, const LinearColor& Color, float Radius)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderFillCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
 }
 
 void RenderManager::DrawWireframeCircle(const Vec2f& Center, const LinearColor& Color, float Radius)
 {
-	PrimitiveShader2D* PrimitiveShader = reinterpret_cast<PrimitiveShader2D*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
 	PrimitiveShader->RenderWireframeCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
 }
 
-void RenderManager::DrawTexture2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate)
+void RenderManager::DrawSprite2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate)
 {
-	SpriteShader2D* Shader2D = reinterpret_cast<SpriteShader2D*>(Shaders_["Texture"].get());
+	SpriteRender2DShader* Shader2D = reinterpret_cast<SpriteRender2DShader*>(Shaders_["Texture"].get());
 
-	Shader2D->RenderTexture2D(Context_, *Textures_[TextureID].get(), Vec3f(Center.x, Center.y, 0.0f), Width, Height, Rotate);
+	Shader2D->RenderSprite2D(Context_, *Textures_[TextureID].get(), Vec3f(Center.x, Center.y, 0.0f), Width, Height, Rotate);
 }
 
 void RenderManager::DrawText2D(int32_t FontID, const std::wstring& Text, const Vec2f& Center, const LinearColor& Color)
 {
-	TextShader2D* Shader2D = reinterpret_cast<TextShader2D*>(Shaders_["Text"].get());
+	TextRender2DShader* Shader2D = reinterpret_cast<TextRender2DShader*>(Shaders_["Text"].get());
 
 	Shader2D->RenderText2D(Context_, *Fonts_[FontID], Text, Vec3f(Center.x, Center.y, 0.0f), Color);
 }
