@@ -212,34 +212,34 @@ void RenderManager::Present(bool bIsVSync)
 
 int32_t RenderManager::CreateTexture2D(const std::string& ResourcePath)
 {
-	std::unique_ptr<Texture2D> TextureResource = std::make_unique<Texture2D>(Device_, ResourcePath);
+	std::unique_ptr<Texture2D> Texture = std::make_unique<Texture2D>(Device_, ResourcePath);
 
-	Textures_.push_back(std::move(TextureResource));
+	Textures_.push_back(std::move(Texture));
 
 	return CountTextureResource_++;
 }
 
 int32_t RenderManager::CreateTTFont(const std::string& ResourcePath, int32_t BeginCodePoint, int32_t EndCodePoint, float FontSize)
 {
-	std::unique_ptr<TTFont> FontResource = std::make_unique<TTFont>(Device_, ResourcePath, BeginCodePoint, EndCodePoint, FontSize);
+	std::unique_ptr<TTFont> Font = std::make_unique<TTFont>(Device_, ResourcePath, BeginCodePoint, EndCodePoint, FontSize);
 
-	Fonts_.push_back(std::move(FontResource));
+	Fonts_.push_back(std::move(Font));
 
 	return CountFontResource_++;
 }
 
 void RenderManager::DrawPoint2D(const Vec2f& Position, const LinearColor& Color)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderPoint(Context_, Vec3f(Position.x, Position.y, 0.0f), Color);
+	Shader2D->RenderPoint(Context_, Vec3f(Position.x, Position.y, 0.0f), Color);
 }
 
 void RenderManager::DrawLine2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderLine(
+	Shader2D->RenderLine(
 		Context_,
 		Vec3f(PositionFrom.x, PositionFrom.y, 0.0f), ColorFrom,
 		Vec3f(  PositionTo.x,   PositionTo.y, 0.0f), ColorTo
@@ -248,9 +248,9 @@ void RenderManager::DrawLine2D(const Vec2f& PositionFrom, const LinearColor& Col
 
 void RenderManager::DrawFillTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderFillTriangle(
+	Shader2D->RenderFillTriangle(
 		Context_,
 		Vec3f(PositionFrom.x, PositionFrom.y, 0.0f), ColorFrom,
 		Vec3f(  PositionBy.x,   PositionBy.y, 0.0f), ColorBy,
@@ -260,9 +260,9 @@ void RenderManager::DrawFillTriangle2D(const Vec2f& PositionFrom, const LinearCo
 
 void RenderManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const LinearColor& ColorFrom, const Vec2f& PositionBy, const LinearColor& ColorBy, const Vec2f& PositionTo, const LinearColor& ColorTo)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderWireframeTriangle(
+	Shader2D->RenderWireframeTriangle(
 		Context_,
 		Vec3f(PositionFrom.x, PositionFrom.y, 0.0f), ColorFrom,
 		Vec3f(  PositionBy.x,   PositionBy.y, 0.0f), ColorBy,
@@ -272,30 +272,30 @@ void RenderManager::DrawWireframeTriangle2D(const Vec2f& PositionFrom, const Lin
 
 void RenderManager::DrawFillQuad2D(const Vec2f& Center, const LinearColor& Color, float Width, float Height, float Rotate)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderFillQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
+	Shader2D->RenderFillQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
 }
 
 void RenderManager::DrawWireframeQuad2D(const Vec2f& Center, const LinearColor& Color, float Width, float Height, float Rotate)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderWireframeQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
+	Shader2D->RenderWireframeQuad(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Width, Height, Rotate);
 }
 
 void RenderManager::DrawFillCircle(const Vec2f& Center, const LinearColor& Color, float Radius)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderFillCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
+	Shader2D->RenderFillCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
 }
 
 void RenderManager::DrawWireframeCircle(const Vec2f& Center, const LinearColor& Color, float Radius)
 {
-	PrimitiveRender2DShader* PrimitiveShader = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
+	PrimitiveRender2DShader* Shader2D = reinterpret_cast<PrimitiveRender2DShader*>(Shaders_["Primitive"].get());
 
-	PrimitiveShader->RenderWireframeCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
+	Shader2D->RenderWireframeCircle(Context_, Vec3f(Center.x, Center.y, 0.0f), Color, Radius);
 }
 
 void RenderManager::DrawSprite2D(int32_t TextureID, const Vec2f& Center, float Width, float Height, float Rotate)
