@@ -1,3 +1,4 @@
+#include "AudioManager.h"
 #include "CrashHandler.h"
 #include "CommandLine.h"
 #include "GameTimer.h"
@@ -34,6 +35,7 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 
 	RenderManager::Get().Setup(MainWindow.get());
 	InputManager::Get().Setup(MainWindow.get());
+	AudioManager::Get().Setup();
 
 	RenderManager::Get().SetDepthBuffer(false);
 	RenderManager::Get().SetAlphaBlend(true);
@@ -66,6 +68,11 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	std::string TexturePath = CommandLine::GetValue("Content") + "Texture\\GrayBlock.png";
 	int32_t TextureID = RenderManager::Get().CreateTexture2D(TexturePath);
 
+	std::string AudioPath = CommandLine::GetValue("Content") + "Audio\\Play.mp3";
+	int32_t SoundID = AudioManager::Get().CreateSound(AudioPath);
+
+	AudioManager::Get().PlaySound(SoundID);
+
 	GameTimer Timer;
 
 	while (!bIsDone_)
@@ -77,8 +84,10 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 		RenderManager::Get().Present();
 	}
 
+	AudioManager::Get().Cleanup();
 	RenderManager::Get().Cleanup();
 	InputManager::Get().Cleanup();
+
 	MainWindow.reset();
 }
 
