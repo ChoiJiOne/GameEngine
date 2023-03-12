@@ -71,16 +71,12 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	std::string AudioPath = CommandLine::GetValue("Content") + "Audio\\Play.mp3";
 	int32_t SoundID = AudioManager::Get().CreateSound(AudioPath);
 
-	AudioManager::Get().PlaySound(SoundID);
-
-	GameTimer Timer;
-
 	while (!bIsDone_)
 	{
-		Timer.Tick();
 		InputManager::Get().Tick();
 
 		RenderManager::Get().Clear(Color::BLACK);
+		RenderManager::Get().DrawText2D(FontID, L"Hello World!", Vec2f(0.0f, 0.0f), Color::RED);
 		RenderManager::Get().Present();
 	}
 
