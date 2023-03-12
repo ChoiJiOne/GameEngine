@@ -8,7 +8,7 @@ GameObject::GameObject(const std::string& Signature)
 
 GameObject::~GameObject()
 {
-	for (auto& OwnComponent : Components_)
+	for (auto& OwnComponent : OwnComponents_)
 	{
 		OwnComponent.second.reset();
 	}

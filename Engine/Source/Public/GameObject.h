@@ -68,9 +68,9 @@ public:
 		if (IsValidComponent(Name)) return nullptr;
 
 		std::unique_ptr<T> NewComponent = std::make_unique<T>(this, Args...);
-		Components_.insert({ Name, std::move(NewComponent) });
+		OwnComponents_.insert({ Name, std::move(NewComponent) });
 
-		return reinterpret_cast<T*>(Components_[Name].get());
+		return reinterpret_cast<T*>(OwnComponents_[Name].get());
 	}
 
 
@@ -86,7 +86,7 @@ public:
 	{
 		if (!IsValidComponent(Name)) return nullptr;
 
-		return reinterpret_cast<T*>(Components_.at(Name).get());
+		return reinterpret_cast<T*>(OwnComponents_.at(Name).get());
 	}
 
 
@@ -102,7 +102,7 @@ public:
 	{
 		if (IsValidComponent(Name))
 		{
-			RemoveValue<std::string, std::unique_ptr<Component>>(Name, Components_);
+			RemoveValue<std::string, std::unique_ptr<Component>>(Name, OwnComponents_);
 		}
 	}
 
@@ -116,7 +116,7 @@ public:
 	 */
 	bool IsValidComponent(const std::string& Name)
 	{
-		return IsExistKey<std::string, std::unique_ptr<Component>>(Name, Components_);
+		return IsExistKey<std::string, std::unique_ptr<Component>>(Name, OwnComponents_);
 	}
 
 
@@ -130,5 +130,5 @@ protected:
 	/**
 	 * @brief 게임 오브젝트가 소유하고 있는 컴포넌트입니다.
 	 */
-	std::unordered_map<std::string, std::unique_ptr<Component>> Components_;
+	std::unordered_map<std::string, std::unique_ptr<Component>> OwnComponents_;
 };
