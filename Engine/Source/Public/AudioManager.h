@@ -4,9 +4,6 @@
 
 #include "Macro.h"
 
-struct ma_engine;
-struct ma_sound;
-
 
 /**
  * @brief 오디오 처리를 수행합니다.
