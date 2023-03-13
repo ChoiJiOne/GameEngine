@@ -22,6 +22,11 @@ public:
 
 	/**
 	 * @brief 게임 오브젝트의 영역 중 AABB 컴포넌트의 생성자입니다.
+	 * 
+	 * @param Object 이 컴포넌트를 소유하는 오브젝트의 포인터 값입니다.
+	 * @param Center AABB의 중심 좌표입니다.
+	 * @param Width AABB의 가로 크기입니다.
+	 * @param Height AABB의 세로 크기입니다.
 	 */
 	AABBComponent(GameObject* Object, const Vec2f& Center, const float& Width, const float& Height);
 
