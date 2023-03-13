@@ -16,9 +16,4 @@ void OBBObject::Tick(float DeltaSeconds)
 {
 	InputComponent_->Tick();
 	RenderComponent_->Tick();
-
-	RenderManager::Get().DrawLine2D(
-		Vec2f(-200.0f, -200.0f), Color::RED,
-		Vec2f(+200.0f, +200.0f), Color::RED
-	);
 }
