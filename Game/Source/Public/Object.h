@@ -12,7 +12,4 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Object);
 
 	virtual void Tick(float DeltaSeconds) override;
-
-private:
-	Vec2f Position;
 };

@@ -1,21 +1,13 @@
 #include "Object.h"
 #include "InputComponent.h"
+#include "AABBComponent.h"
 #include "RenderManager.h"
 
 Object::Object(const std::string& Signature)
 	: GameObject(Signature)
 {
 	InputComponent* ObjectInputComponent = CreateComponent<InputComponent>("InputComponent");
-	ObjectInputComponent->BindKeyAction(
-		"ENTER",
-		KeyAction{
-			EVirtualKey::CODE_RETURN,
-			EPressState::PRESSED,
-			[&] {
-				RenderManager::Get().DrawText2D(0, L"Hello World!", Vec2f(0.0f, 0.0f), Color::RED);
-			}
-		}
-	);
+	CreateComponent<AABBComponent>("BoundComponent", Vec2f(0.0f, 0.0f), 100.0f, 100.0f);
 
 	ObjectInputComponent->BindKeyAction(
 		"LEFT",
@@ -23,7 +15,10 @@ Object::Object(const std::string& Signature)
 			EVirtualKey::CODE_LEFT,
 			EPressState::PRESSED,
 			[&] {
-				Position.x -= 10;
+				AABBComponent* ObjectBoundComponent = GetComponent<AABBComponent>("BoundComponent");
+				Vec2f Center = ObjectBoundComponent->GetCenter();
+				Center.x -= 10;
+				ObjectBoundComponent->SetCenter(Center);
 			}
 		}
 	);
@@ -34,7 +29,10 @@ Object::Object(const std::string& Signature)
 			EVirtualKey::CODE_RIGHT,
 			EPressState::PRESSED,
 			[&] {
-				Position.x += 10;
+				AABBComponent* ObjectBoundComponent = GetComponent<AABBComponent>("BoundComponent");
+				Vec2f Center = ObjectBoundComponent->GetCenter();
+				Center.x += 10;
+				ObjectBoundComponent->SetCenter(Center);
 			}
 		}
 	);
@@ -44,5 +42,12 @@ void Object::Tick(float DeltaSeconds)
 {
 	GetComponent<InputComponent>("InputComponent")->Tick();
 
-	RenderManager::Get().DrawSprite2D(0, Position, 100.0f, 100.0f);
+	AABBComponent* ObjectBoundComponent = GetComponent<AABBComponent>("BoundComponent");
+
+	RenderManager::Get().DrawWireframeQuad2D(
+		ObjectBoundComponent->GetCenter(),
+		Color::RED,
+		ObjectBoundComponent->GetWidth(),
+		ObjectBoundComponent->GetHeight()
+	);
 }
