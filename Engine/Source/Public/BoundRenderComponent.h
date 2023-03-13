@@ -66,6 +66,15 @@ public:
 
 private:
 	/**
+	 * @brief 경계 영역을 렌더링할 수 있는지 확인합니다.
+	 * 
+	 * @return 경계 영역을 렌더링할 수 있다면 true, 그렇지 않으면 false를 반환합니다.
+	 */
+	bool CanRenderBound();
+
+
+private:
+	/**
 	 * @brief 게임 오브젝트의 경계 영역입니다.
 	 */
 	BoundComponent* BoundComponent_ = nullptr;

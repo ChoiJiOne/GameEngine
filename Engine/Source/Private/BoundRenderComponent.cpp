@@ -26,17 +26,12 @@ void BoundRenderComponent::AttachBoundComponent(BoundComponent* Bound)
 
 void BoundRenderComponent::Tick()
 {
-	if (!BoundComponent_)
+	if (!CanRenderBound())
 	{
 		return;
 	}
 
 	BoundComponent::EBoundaryShape BoundaryShape = BoundComponent_->GetBoundaryShape();
-
-	if (BoundaryShape == BoundComponent::EBoundaryShape::NONE)
-	{
-		return;
-	}
 
 	if (BoundaryShape == BoundComponent::EBoundaryShape::AABB)
 	{
@@ -71,4 +66,21 @@ void BoundRenderComponent::Tick()
 			ObjectComponent->GetRadius()
 		);
 	}
+}
+
+bool BoundRenderComponent::CanRenderBound()
+{
+	if (!BoundComponent_)
+	{
+		return false;
+	}
+
+	BoundComponent::EBoundaryShape BoundaryShape = BoundComponent_->GetBoundaryShape();
+
+	if (BoundaryShape == BoundComponent::EBoundaryShape::NONE)
+	{
+		return false;
+	}
+
+	return true;
 }
