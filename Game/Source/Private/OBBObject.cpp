@@ -2,7 +2,6 @@
 #include "BoundRenderComponent.h"
 #include "InputComponent.h"
 #include "OBBComponent.h"
-#include "RenderManager.h"
 
 OBBObject::OBBObject(const std::string& Signature)
 	: GameObject(Signature)
