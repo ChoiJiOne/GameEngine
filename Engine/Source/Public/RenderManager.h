@@ -3,15 +3,14 @@
 #include "Macro.h"
 #include "Math.hpp"
 #include "Shader.h"
+#include "Texture2D.h"
+#include "TTFont.h"
 
 #include <memory>
 #include <unordered_map>
 #include <d3d11.h>
 
 class Window;
-class Texture2D;
-class TTFont;
-
 
 /**
  * @brief 렌더링 관련 처리를 수행합니다.
