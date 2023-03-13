@@ -16,9 +16,33 @@ Object::Object(const std::string& Signature)
 			}
 		}
 	);
+
+	ObjectInputComponent->BindKeyAction(
+		"LEFT",
+		KeyAction{
+			EVirtualKey::CODE_LEFT,
+			EPressState::PRESSED,
+			[&] {
+				Position.x -= 10;
+			}
+		}
+	);
+
+	ObjectInputComponent->BindKeyAction(
+		"RIGHT",
+		KeyAction{
+			EVirtualKey::CODE_RIGHT,
+			EPressState::PRESSED,
+			[&] {
+				Position.x += 10;
+			}
+		}
+	);
 }
 
 void Object::Tick(float DeltaSeconds)
 {
 	GetComponent<InputComponent>("InputComponent")->Tick();
+
+	RenderManager::Get().DrawSprite2D(0, Position, 100.0f, 100.0f);
 }

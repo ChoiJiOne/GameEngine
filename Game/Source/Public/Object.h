@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Math.hpp"
 
 
 class Object : public GameObject
@@ -13,5 +14,5 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 private:
-	
+	Vec2f Position;
 };
