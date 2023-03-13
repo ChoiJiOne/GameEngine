@@ -26,36 +26,34 @@ struct EventAction
 
 
 /**
- * @brief 입력 처리를 수행하는 컴포넌트입니다.
+ * @brief 게임 오브젝트의 입력 처리를 수행하는 컴포넌트입니다.
  */
 class InputComponent : public Component
 {
 public:
 	/**
-	 * @brief 입력 처리를 수행하는 컴포넌트의 생성자입니다.
+	 * @brief 게임 오브젝트의 입력 처리를 수행하는 컴포넌트의 생성자입니다.
 	 * 
 	 * @param Object 이 컴포넌트를 소유하는 오브젝트의 포인터 값입니다.
 	 */
 	InputComponent(GameObject* Object)
-		: Component(Object)
-	{}
+		: Component(Object) {}
 
 
 	/**
-	 * @brief 입력 처리를 수행하는 컴포넌트의 가상 소멸자입니다.
+	 * @brief 게임 오브젝트의 입력 처리를 수행하는 컴포넌트의 가상 소멸자입니다.
 	 */
-	virtual ~InputComponent()
-	{}
+	virtual ~InputComponent() {}
 
 
 	/**
-	 * @brief 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
+	 * @brief 게임 오브젝트의 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
 	 */
 	DISALLOW_COPY_AND_ASSIGN(InputComponent);
 
 
 	/**
-	 * @brief 입력 처리 컴포넌트를 업데이트합니다.
+	 * @brief 게임 오브젝트의 입력 처리 컴포넌트를 업데이트합니다.
 	 */
 	virtual void Tick();
 
