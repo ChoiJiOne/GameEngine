@@ -13,6 +13,7 @@
  */
 #include "TTFont.h"
 #include "Texture2D.h"
+#include "Object.h"
 
 #include <memory>
 
@@ -71,12 +72,14 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	std::string AudioPath = CommandLine::GetValue("Content") + "Audio\\Play.mp3";
 	int32_t SoundID = AudioManager::Get().CreateSound(AudioPath);
 
+	std::unique_ptr<Object> Obj = std::make_unique<Object>("TEST");
+
 	while (!bIsDone_)
 	{
 		InputManager::Get().Tick();
 
 		RenderManager::Get().Clear(Color::BLACK);
-		RenderManager::Get().DrawText2D(FontID, L"Hello World!", Vec2f(0.0f, 0.0f), Color::RED);
+		Obj->Tick(0.0f);
 		RenderManager::Get().Present();
 	}
 
