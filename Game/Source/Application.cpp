@@ -13,7 +13,9 @@
  */
 #include "TTFont.h"
 #include "Texture2D.h"
-#include "Object.h"
+#include "AABBObject.h"
+#include "OBBObject.h"
+#include "CircleObject.h"
 
 #include <memory>
 
@@ -72,14 +74,18 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	std::string AudioPath = CommandLine::GetValue("Content") + "Audio\\Play.mp3";
 	int32_t SoundID = AudioManager::Get().CreateSound(AudioPath);
 
-	std::unique_ptr<Object> Obj = std::make_unique<Object>("TEST");
+	std::unique_ptr<AABBObject> AABBObj = std::make_unique<AABBObject>("AABBObject");
+	std::unique_ptr<OBBObject> OBBObj = std::make_unique<OBBObject>("OBBObject");
+	std::unique_ptr<CircleObject> CircleObj = std::make_unique<CircleObject>("CircleObject");
 
 	while (!bIsDone_)
 	{
 		InputManager::Get().Tick();
 
 		RenderManager::Get().Clear(Color::BLACK);
-		Obj->Tick(0.0f);
+		AABBObj->Tick(0.0f);
+		OBBObj->Tick(0.0f);
+		CircleObj->Tick(0.0f);
 		RenderManager::Get().Present();
 	}
 
