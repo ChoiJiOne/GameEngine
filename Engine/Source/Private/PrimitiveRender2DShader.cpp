@@ -179,12 +179,16 @@ void PrimitiveRender2DShader::RenderWireframeQuad(ID3D11DeviceContext* Context, 
 	PrimitiveVertex_["WireframeQuad"][3].Position = Vec3f(+Width / 2.0f, -Height / 2.0f, Center.z);
 	PrimitiveVertex_["WireframeQuad"][3].Color = Color;
 
+	float Radian = ToRadian(Rotate);
+	float Cos = cos(Radian);
+	float Sin = sin(Radian);
+
 	for (auto& PrimitiveVertex : PrimitiveVertex_["WireframeQuad"])
 	{
 		Vec3f Position = PrimitiveVertex.Position;
 
-		PrimitiveVertex.Position.x = cos(Rotate) * Position.x - sin(Rotate) * Position.y;
-		PrimitiveVertex.Position.y = sin(Rotate) * Position.x + cos(Rotate) * Position.y;
+		PrimitiveVertex.Position.x = Cos * Position.x - Sin * Position.y;
+		PrimitiveVertex.Position.y = Sin * Position.x + Cos * Position.y;
 
 		PrimitiveVertex.Position += Center;
 	}

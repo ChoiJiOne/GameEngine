@@ -43,10 +43,10 @@ void OBBComponent::SetRotate(const float& Rotate)
 
 void OBBComponent::UpdateBoundPositions()
 {
-	BoundPositions_[INDEX_LB] = Center_ + Vec2f(-Width_ / 2.0f, -Height_ / 2.0f);
-	BoundPositions_[INDEX_LT] = Center_ + Vec2f(-Width_ / 2.0f, +Height_ / 2.0f);
-	BoundPositions_[INDEX_RB] = Center_ + Vec2f(+Width_ / 2.0f, -Height_ / 2.0f);
-	BoundPositions_[INDEX_RT] = Center_ + Vec2f(+Width_ / 2.0f, +Height_ / 2.0f);
+	BoundPositions_[INDEX_LB] = Vec2f(-Width_ / 2.0f, -Height_ / 2.0f);
+	BoundPositions_[INDEX_LT] = Vec2f(-Width_ / 2.0f, +Height_ / 2.0f);
+	BoundPositions_[INDEX_RB] = Vec2f(+Width_ / 2.0f, -Height_ / 2.0f);
+	BoundPositions_[INDEX_RT] = Vec2f(+Width_ / 2.0f, +Height_ / 2.0f);
 
 	float Radian = ToRadian(Rotate_);
 	float Cos = cos(Radian);
@@ -60,5 +60,6 @@ void OBBComponent::UpdateBoundPositions()
 		RotatePosition.y = Sin * BoundPosition.x + Cos * BoundPosition.y;
 
 		BoundPosition = RotatePosition;
+		BoundPosition += Center_;
 	}
 }
