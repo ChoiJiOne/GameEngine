@@ -2,6 +2,7 @@
 #include "InputComponent.h"
 #include "AABBComponent.h"
 #include "CircleComponent.h"
+#include "OBBComponent.h"
 #include "RenderManager.h"
 
 Object::Object(const std::string& Signature)
@@ -10,6 +11,7 @@ Object::Object(const std::string& Signature)
 	InputComponent* ObjectInputComponent = CreateComponent<InputComponent>("InputComponent");
 	CreateComponent<AABBComponent>("BoundComponent", Vec2f(0.0f, 0.0f), 200.0f, 200.0f);
 	CreateComponent<CircleComponent>("CircleComponent", Vec2f(0.0f, 0.0f), 100.0f);
+	CreateComponent<OBBComponent>("OBBComponent", Vec2f(0.0f, 0.0f), 200.0f, 100.0f, 0.0f);
 
 	ObjectInputComponent->BindKeyAction(
 		"LEFT",
@@ -44,18 +46,17 @@ void Object::Tick(float DeltaSeconds)
 {
 	GetComponent<InputComponent>("InputComponent")->Tick();
 
-	AABBComponent* ObjectBoundComponent = GetComponent<AABBComponent>("BoundComponent");
+	OBBComponent* ObjectBoundComponent = GetComponent<OBBComponent>("OBBComponent");
+
+	float Rotate = ObjectBoundComponent->GetRotate();
+	Rotate += 0.1f;
+	ObjectBoundComponent->SetRotate(Rotate);
 
 	RenderManager::Get().DrawWireframeQuad2D(
 		ObjectBoundComponent->GetCenter(),
 		Color::RED,
 		ObjectBoundComponent->GetWidth(),
-		ObjectBoundComponent->GetHeight()
-	);
-
-	RenderManager::Get().DrawWireframeCircle(
-		GetComponent<CircleComponent>("CircleComponent")->GetCenter(),
-		Color::BLUE,
-		GetComponent<CircleComponent>("CircleComponent")->GetRadius()
+		ObjectBoundComponent->GetHeight(),
+		ObjectBoundComponent->GetRotate()
 	);
 }
