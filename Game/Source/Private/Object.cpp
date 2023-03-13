@@ -1,13 +1,15 @@
 #include "Object.h"
 #include "InputComponent.h"
 #include "AABBComponent.h"
+#include "CircleComponent.h"
 #include "RenderManager.h"
 
 Object::Object(const std::string& Signature)
 	: GameObject(Signature)
 {
 	InputComponent* ObjectInputComponent = CreateComponent<InputComponent>("InputComponent");
-	CreateComponent<AABBComponent>("BoundComponent", Vec2f(0.0f, 0.0f), 100.0f, 100.0f);
+	CreateComponent<AABBComponent>("BoundComponent", Vec2f(0.0f, 0.0f), 200.0f, 200.0f);
+	CreateComponent<CircleComponent>("CircleComponent", Vec2f(0.0f, 0.0f), 100.0f);
 
 	ObjectInputComponent->BindKeyAction(
 		"LEFT",
@@ -49,5 +51,11 @@ void Object::Tick(float DeltaSeconds)
 		Color::RED,
 		ObjectBoundComponent->GetWidth(),
 		ObjectBoundComponent->GetHeight()
+	);
+
+	RenderManager::Get().DrawWireframeCircle(
+		GetComponent<CircleComponent>("CircleComponent")->GetCenter(),
+		Color::BLUE,
+		GetComponent<CircleComponent>("CircleComponent")->GetRadius()
 	);
 }
