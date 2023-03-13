@@ -7,7 +7,7 @@ CircleObject::CircleObject(const std::string& Signature)
 	: GameObject(Signature)
 {
 	InputComponent_ = CreateComponent<InputComponent>("InputComponent");
-	BoundComponent_ = CreateComponent<CircleComponent>("CircleComponent", Vec2f(0.0f, 0.0f), 200.0f);
+	BoundComponent_ = CreateComponent<CircleComponent>("CircleComponent", Vec2f(0.0f, 0.0f), 100.0f);
 	RenderComponent_ = CreateComponent<BoundRenderComponent>("BoundRenderComponent", BoundComponent_, Color::BLUE);
 }
 
