@@ -16,4 +16,5 @@ private:
 	class InputComponent* InputComponent_ = nullptr;
 	class AABBComponent* BoundComponent_ = nullptr;
 	class BoundRenderComponent* RenderComponent_ = nullptr;
+	class SpriteRenderComponent* SpriteRenderComponent_ = nullptr;
 };

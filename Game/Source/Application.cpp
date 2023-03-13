@@ -75,8 +75,8 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 	int32_t SoundID = AudioManager::Get().CreateSound(AudioPath);
 
 	std::unique_ptr<AABBObject> AABBObj = std::make_unique<AABBObject>("AABBObject");
-	std::unique_ptr<OBBObject> OBBObj = std::make_unique<OBBObject>("OBBObject");
-	std::unique_ptr<CircleObject> CircleObj = std::make_unique<CircleObject>("CircleObject");
+	//std::unique_ptr<OBBObject> OBBObj = std::make_unique<OBBObject>("OBBObject");
+	//std::unique_ptr<CircleObject> CircleObj = std::make_unique<CircleObject>("CircleObject");
 
 	while (!bIsDone_)
 	{
@@ -84,8 +84,8 @@ void RunApplication(int32_t ArgC, char* ArgV[])
 
 		RenderManager::Get().Clear(Color::BLACK);
 		AABBObj->Tick(0.0f);
-		OBBObj->Tick(0.0f);
-		CircleObj->Tick(0.0f);
+		//OBBObj->Tick(0.0f);
+		//CircleObj->Tick(0.0f);
 		RenderManager::Get().Present();
 	}
 
