@@ -1,11 +1,11 @@
-# GameEngine
-- C++를 이용한 게임 개발 프로젝트입니다.
+# GameEngine2D
+- C++를 이용한 2D 게임 엔진 개발 프로젝트입니다.
 <br><br>
 
 
 ## Platform
 
-`GameEngine`이 지원하는 플랫폼은 다음과 같습니다.  
+`GameEngine2D`이 지원하는 플랫폼은 다음과 같습니다.  
 - `Windows`
 <br><br>
 
